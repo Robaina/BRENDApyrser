@@ -1,0 +1,9 @@
+### Distribution of reaction types in metabolism
+I propose to analyze the distribution of chemical reaction types in metabolic networks. We can easily do this by looking at the E.C. number of the enzymes.
+I think that the most abundant type is redox reactions. I wonder if central carbon metabolism is enriched in redox reactions or in any other kind of reaction. If so, are these reactions the ones requiring metals to be catalyzed? _i.e._ metalloenzymes?
+
+Would be interesting to discover that ancient metabolic networks were enriched in a particular type of chemical reaction, and other types of chemical reaction only emerged later on. Perhaps this is linked to prevalent environmental conditions, like pH and oxidation potential. Or, perhaps just a matter of chance? What is the interplay (if any) between the different kinds of reaction. That is, will a stable, successful metabolic network require a precise proportion of redox versus acid-base versus transfer reactions, for instance?
+
+Also, what is the reaction kind that most strongly depends on cofactors?
+
+The paper by Ralser's lab: The self-inhibitory nature of metabolic networks and its alleviation through compartmentalization is very interesting! They show that most enzymes in human metabolism are competitively inhibited due to structural similarity between substrates and other metabolites, usually close ones in the metabolic network. Also, compartmentalization reduces up to 50% of all inhibitory interactions. This points to inhibitory regulation as a constrain on metabolism rather than an evolved characteristic! Also explains why most regulatory enzyme-metabolite interactions are inhibitory.
