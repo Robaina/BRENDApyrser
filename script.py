@@ -4,12 +4,21 @@ workDir = 'C:/Users/tinta/OneDrive/Documents/Projects/BRENDA'
 dataFile = workDir + '/brenda_download.txt'
 
 brenda = BRENDA(dataFile)
-r = brenda.getReactions('2.2.1.1')[0]
+r = brenda.getReactions('1.1.1.1')[0]
 
-lines = r._getDataLines('SA')
-i = 4
-print(lines[i])
-r._extractDataLineInfo(lines[i])
+r.getPHData()
 
+lines = r._getDataLines('PR')
+for line in lines[:10]:
+    # print(line)
+    print(r._extractDataLineInfo(line, numeric_value=False))
+r.getSpecies()
 KMs = r.getKMvalues()
 [KM['value'] for KM in KMs['D-ribose 5-phosphate']]
+
+s = "#102# 8.47 {(S)-N-benzyl-3-pyrrolidinol}  (#102# pH 8.0 <185>) <185>"
+r._extractDataLineInfo(line, numeric_value=False)
+
+r._getDictOfEnzymeProperties('KM')
+
+r.getKMvalues()

@@ -59,6 +59,8 @@ class BRENDA:
             self.data = file.read()
         self.__ec_numbers = [ec.group(1)
                              for ec in re.finditer('(?<=ID\\t)(.*)(?=\\n)', self.data)]
+        self.copyright = """Copyrighted by Dietmar Schomburg, Techn. University Braunschweig, GERMANY.
+        Distributed under the License as stated at http:/www.brenda-enzymes.org"""
 
     def __getRxnData(self, ec_number):
         idx_1 = self.data.find(f'ID\t{ec_number}')
@@ -71,7 +73,9 @@ class BRENDA:
         in the database if left as None.
         """
         if ec_number is None:
-            return [Reaction(self.__getRxnData(ec)) for ec in self.__ec_numbers]
+            reactions = [Reaction(self.__getRxnData(ec)) for ec in self.__ec_numbers]
+            # self.reactions = reactions
+            return reactions
         else:
             if ec_number in self.__ec_numbers:
                 return [Reaction(self.__getRxnData(ec_number))]
@@ -80,13 +84,13 @@ class BRENDA:
 
     def getOrganisms(self) -> list:
         """
-        Get list of represented species in BRENDA
+        Get list of all represented species in BRENDA
         """
-
-    def getMetaInformation(self) -> dict:
-        """
-        Get BRENDA version, licence and meta information
-        """
+        species = set()
+        reactions = self.getReactions()
+        for reaction in reactions:
+            species.update([s['name'] for s in reaction.getSpecies()])
+        return list(species)
 
 
 class Reaction:
@@ -124,6 +128,13 @@ class Reaction:
         except Exception:
             return (line, '')
 
+    @staticmethod
+    def __eval_range_value(v):
+        if not re.search('\d-\d', v):
+            return float(v)
+        else:
+            return np.mean([float(s) for s in v.split('-')])
+
     def _extractDataLineInfo(self, line: str, numeric_value=False):
         """
         Extracts data fields in each data line according to the tags used by BRENDA
@@ -131,12 +142,12 @@ class Reaction:
         is the value of that particular data field, e.g., KM value.
         """
         line = self.__removeTabs(line)
+        line, specific_info = self.__extractDataField(line, ('{', '.*}'))
         line, meta = self.__extractDataField(line, ('\(', '.*\)'))
         line, refs = self.__extractDataField(line, ('<', '>'))
         line, species = self.__extractDataField(line, ('#', '#'))
-        line, specific_info = self.__extractDataField(line, ('{', '.*}'))
         if numeric_value:
-            value = float(line.strip())
+            value = self.__eval_range_value(line.strip())
         else:
             value = line.strip()
 
@@ -169,6 +180,21 @@ class Reaction:
                                        'meta': data['meta'],
                                        'refs': data['refs']})
         return res
+
+    def __extractTempOrPHData(self, data_type: str) -> list:
+        values = []
+        lines = self._getDataLines(data_type)
+        if 'R' not in data_type:
+            eval_value = self.__eval_range_value
+        else:
+            def eval_value(v): return [float(s) for s in v.split('-')]
+
+        for line in lines:
+            res = self._extractDataLineInfo(line)
+            values.append({'value': eval_value(res['value']),
+                           'species': res['species'],
+                           'meta': res['meta'], 'refs': res['refs']})
+        return values
 
     def getCofactors(self):
         return self._getDictOfEnzymeActuators('CF')
@@ -223,26 +249,14 @@ class Reaction:
         return res
 
     def getTemperatureData(self):
+        return {'optimum': self.__extractTempOrPHData('TO'),
+                'range': self.__extractTempOrPHData('TR'),
+                'stability': self.__extractTempOrPHData('TS')}
 
-        def getData(data_type):
-            values = []
-            lines = self._getDataLines(data_type)
-            if data_type != 'TR':
-                eval_temp = lambda t: float(t) if not re.search('\d-\d', t) else np.mean(
-                    [float(s) for s in t.split('-')])
-            else:
-                eval_temp = lambda t: [float(s) for s in t.split('-')]
-
-            for line in lines:
-                res = self._extractDataLineInfo(line)
-                values.append({'value': eval_temp(res['value']),
-                               'species': res['species'],
-                               'meta': res['meta'], 'refs': res['refs']})
-            return values
-
-        return {'optimum': getData('TO'),
-                'range': getData('TR'),
-                'stability': getData('TS')}
+    def getPHData(self):
+        return {'optimum': self.__extractTempOrPHData('PHO'),
+                'range': self.__extractTempOrPHData('PHR'),
+                'stability': self.__extractTempOrPHData('PHS')}
 
     def getSpecies(self) -> dict:
         """
