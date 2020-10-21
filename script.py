@@ -4,8 +4,8 @@ workDir = 'C:/Users/tinta/OneDrive/Documents/Projects/BRENDA'
 dataFile = workDir + '/brenda_download.txt'
 
 brenda = BRENDA(dataFile)
-r = brenda.getReactions('1.1.1.1')[0]
-
+r = brenda.reactions.get_by_id('2.1.1.1')
+r.summary
 r.getPHData()
 
 lines = r._getDataLines('PR')

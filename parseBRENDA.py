@@ -1,5 +1,6 @@
 import re
 import numpy as np
+import pandas as pd
 
 fields = {
     'AC': 'activating compound',
@@ -56,54 +57,80 @@ class BRENDA:
     def __init__(self, path_to_database):
 
         with open(path_to_database, encoding="iso-8859-1") as file:
-            self.data = file.read()
+            self.__data = file.read()
         self.__ec_numbers = [ec.group(1)
-                             for ec in re.finditer('(?<=ID\\t)(.*)(?=\\n)', self.data)]
-        self.copyright = """Copyrighted by Dietmar Schomburg, Techn. University Braunschweig, GERMANY.
-        Distributed under the License as stated at http:/www.brenda-enzymes.org"""
+                             for ec in re.finditer('(?<=ID\\t)(.*)(?=\\n)', self.__data)]
+        self.__reactions = self.__initializeReactionObjects()
+        self.__copyright = """Copyrighted by Dietmar Schomburg, Techn. University Braunschweig,\\
+        GERMANY. Distributed under the License as stated at http:/www.brenda-enzymes.org"""
 
-    def __getRxnData(self, ec_number):
-        idx_1 = self.data.find(f'ID\t{ec_number}')
-        idx_2 = self.data[idx_1:].find('///')
-        return self.data[idx_1:(idx_1+idx_2)]
+    def __getRxnData(self):
+        rxn_data = [r.group(0)
+                    for r in re.finditer('ID\\t(.+?)///', self.__data, flags=re.DOTALL)]
+        del self.__data
+        return rxn_data
 
-    def getReactions(self, ec_number: str = None) -> list:
-        """
-        Get reaction object corresponding to the given EC number or all reaction objects
-        in the database if left as None.
-        """
-        if ec_number is None:
-            reactions = [Reaction(self.__getRxnData(ec)) for ec in self.__ec_numbers]
-            # self.reactions = reactions
-            return reactions
-        else:
-            if ec_number in self.__ec_numbers:
-                return [Reaction(self.__getRxnData(ec_number))]
-            else:
-                raise ValueError(f'Enzyme {ec_number} not found in database')
+    def __initializeReactionObjects(self):
+        return [Reaction(datum) for datum in self.__getRxnData()]
+
+    @property
+    def reactions(self):
+        return ReactionList(self.__reactions)
+
+    @property
+    def copyright(self):
+        return self.__copyright
+
+    # def getReactionByID(self, ec_number):
+    #     try:
+    #         return [rxn for rxn in self.__reactions if rxn.__ec_number == ec_number][0]
+    #     except Exception:
+    #         raise ValueError(f'Enzyme {ec_number} not found in database')
 
     def getOrganisms(self) -> list:
         """
         Get list of all represented species in BRENDA
         """
         species = set()
-        reactions = self.getReactions()
-        for reaction in reactions:
-            species.update([s['name'] for s in reaction.getSpecies()])
-        return list(species)
+        for rxn in self.__reactions:
+            species.update([s['name'] for s in rxn.getSpecies().values()])
+        species.remove('')
+        species = [s for s in species if 'no activity' not in s]
+        return species
+
+
+class ReactionList(list):
+    def get_by_id(self, id):
+        try:
+            return [rxn for rxn in self if rxn.ec_number == id][0]
+        except Exception:
+            raise ValueError(f'Enzyme {id} not found in database')
 
 
 class Reaction:
     def __init__(self, reaction_data):
         self.__reaction_data = reaction_data
-        self.ec_number = re.search('(?<=ID\t)(.*)(?=\n)', self.__reaction_data).group(1)
-        self.systematic_name = re.search(
-            '(?<=SN\t)(.*)(?=\n)', self.__reaction_data).group(1)
-        self.name = re.search('(?<=RN\t)(.*)(?=\n)', self.__reaction_data).group(1)
-        self.mechanism = re.search('(?<=RE\t)(.*)(?=\n)', self.__reaction_data).group(1)
-        self.reaction_type = re.search('(?<=RT\t)(.*)(?=\n)', self.__reaction_data).group(1)
+        self.__ec_number = self.__extractRegexPattern('(?<=ID\t)(.*)(?=\n)')
+        self.__systematic_name = self.__extractRegexPattern('(?<=SN\t)(.*)(?=\n)')
+        self.__name = self.__extractRegexPattern('(?<=RN\t)(.*)(?=\n)')
+        self.__mechanism = self.__extractRegexPattern('(?<=RE\t)(.*)(?=\n)').replace('=', '<=>')
+        self.__reaction_type = self.__extractRegexPattern('(?<=RT\t)(.*)(?=\n)')
 
-    def _getDataLines(self, pattern: str):
+    def __printReactionSummary(self):
+        data = {'EC number': self.__ec_number,
+                'Name': self.__name,
+                'Systematic name': self.__systematic_name,
+                'Reaction type': self.__reaction_type,
+                'Mechanism': self.__mechanism}
+        return pd.DataFrame.from_dict(data, orient='index', columns=[''])
+
+    def __extractRegexPattern(self, pattern):
+        try:
+            return re.search(pattern, self.__reaction_data).group(1)
+        except Exception:
+            return ''
+
+    def __getDataLines(self, pattern: str):
         try:
             search_pattern = f'{pattern}\t(.+?)\n(?!\t)'
             return [p.group(1)
@@ -111,6 +138,30 @@ class Reaction:
                         search_pattern, self.__reaction_data, flags=re.DOTALL)]
         except Exception:
             return []
+
+    @property
+    def summary(self):
+        return self.__printReactionSummary()
+
+    @property
+    def ec_number(self):
+        return self.__ec_number
+
+    @property
+    def name(self):
+        return self.__name
+
+    @property
+    def systematic_name(self):
+        return self.__systematic_name
+
+    @property
+    def mechanism(self):
+        return self.__mechanism
+
+    @property
+    def reaction_type(self):
+        return self.__reaction_type
 
     @staticmethod
     def __removeTabs(line):
@@ -135,7 +186,15 @@ class Reaction:
         else:
             return np.mean([float(s) for s in v.split('-')])
 
-    def _extractDataLineInfo(self, line: str, numeric_value=False):
+    @staticmethod
+    def __splitSpeciesFromProteinID(line):
+        try:
+            idx = re.search('[A-Z]{1}[0-9]{1}', line).start()
+            return (line[:idx].strip(), line[idx:].strip())
+        except Exception:
+            return (line.strip(), '')
+
+    def __extractDataLineInfo(self, line: str, numeric_value=False):
         """
         Extracts data fields in each data line according to the tags used by BRENDA
         and described in the REAMDE.txt file. What remains after extracting all tags
@@ -155,22 +214,22 @@ class Reaction:
                 'meta': meta, 'refs': refs.split(','),
                 'specific_info': specific_info}
 
-    def _getDictOfEnzymeActuators(self, pattern: str) -> dict:
+    def __getDictOfEnzymeActuators(self, pattern: str) -> dict:
         res = {}
-        lines = self._getDataLines(pattern)
+        lines = self.__getDataLines(pattern)
         for line in lines:
-            data = self._extractDataLineInfo(line)
+            data = self.__extractDataLineInfo(line)
             if data['value'] != 'more':
                 res[data['value']] = {'species': data['species'],
                                       'meta': data['meta'],
                                       'refs': data['refs']}
         return res
 
-    def _getDictOfEnzymeProperties(self, pattern):
+    def __getDictOfEnzymeProperties(self, pattern):
         res = {}
-        lines = self._getDataLines(pattern)
+        lines = self.__getDataLines(pattern)
         for line in lines:
-            data = self._extractDataLineInfo(line, numeric_value=True)
+            data = self.__extractDataLineInfo(line, numeric_value=True)
             substrate = data['specific_info']
             if substrate != 'more':
                 if substrate not in res.keys():
@@ -183,46 +242,46 @@ class Reaction:
 
     def __extractTempOrPHData(self, data_type: str) -> list:
         values = []
-        lines = self._getDataLines(data_type)
+        lines = self.__getDataLines(data_type)
         if 'R' not in data_type:
             eval_value = self.__eval_range_value
         else:
             def eval_value(v): return [float(s) for s in v.split('-')]
 
         for line in lines:
-            res = self._extractDataLineInfo(line)
+            res = self.__extractDataLineInfo(line)
             values.append({'value': eval_value(res['value']),
                            'species': res['species'],
                            'meta': res['meta'], 'refs': res['refs']})
         return values
 
     def getCofactors(self):
-        return self._getDictOfEnzymeActuators('CF')
+        return self.__getDictOfEnzymeActuators('CF')
 
     def getMetals(self):
-        return self._getDictOfEnzymeActuators('ME')
+        return self.__getDictOfEnzymeActuators('ME')
 
     def getInhibitors(self):
-        return self._getDictOfEnzymeActuators('IN')
+        return self.__getDictOfEnzymeActuators('IN')
 
     def getActivators(self):
-        return self._getDictOfEnzymeActuators('AC')
+        return self.__getDictOfEnzymeActuators('AC')
 
     def getKMvalues(self):
-        return self._getDictOfEnzymeProperties('KM')
+        return self.__getDictOfEnzymeProperties('KM')
 
     def getKIvalues(self):
-        return self._getDictOfEnzymeProperties('KI')
+        return self.__getDictOfEnzymeProperties('KI')
 
     def getKKMvalues(self):
-        return self._getDictOfEnzymeProperties('KKM')
+        return self.__getDictOfEnzymeProperties('KKM')
 
     def getKcatvalues(self):
-        return self._getDictOfEnzymeProperties('TN')
+        return self.__getDictOfEnzymeProperties('TN')
 
     def getSpecificActivities(self):
-        lines = self._getDataLines('SA')
-        return [self._extractDataLineInfo(line, numeric_value=True) for line in lines]
+        lines = self.__getDataLines('SA')
+        return [self.__extractDataLineInfo(line, numeric_value=True) for line in lines]
 
     def getSubstratesAndProducts(self) -> list:
         """
@@ -230,9 +289,9 @@ class Reaction:
         of the enzyme across organisms.
         """
         substrates, products, res = [], [], []
-        lines = self._getDataLines('NSP')
+        lines = self.__getDataLines('NSP')
         for line in lines:
-            data = self._extractDataLineInfo(line)
+            data = self.__extractDataLineInfo(line)
             is_full_rxn = '=' in data['value']
             rxn = data['value'].replace(
                 '{}', '').replace('?', '').replace('more', '').strip()
@@ -263,10 +322,13 @@ class Reaction:
         Returns a dict listing all proteins for given EC number
         """
         species = {}
-        lines = self._getDataLines('PR')
+        lines = self.__getDataLines('PR')
         for line in lines:
-            res = self._extractDataLineInfo(line)
-            species[res['species'][0]] = {'name': res['value'], 'refs': res['refs']}
+            res = self.__extractDataLineInfo(line)
+            species_name, protein_ID = self.__splitSpeciesFromProteinID(res['value'])
+            species[res['species'][0]] = {'name': species_name,
+                                          'proteinID': protein_ID,
+                                          'refs': res['refs']}
         return species
 
     def getReferences(self):
@@ -274,7 +336,7 @@ class Reaction:
         Returns a dict listing the bibliography cited for the given EC number
         """
         references = {}
-        lines = self._getDataLines('RF')
+        lines = self.__getDataLines('RF')
         for line in lines:
             line = self.__removeTabs(line)
             line, refs = self.__extractDataField(line, ('<', '>'))
