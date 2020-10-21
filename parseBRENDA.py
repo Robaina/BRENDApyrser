@@ -81,12 +81,6 @@ class BRENDA:
     def copyright(self):
         return self.__copyright
 
-    # def getReactionByID(self, ec_number):
-    #     try:
-    #         return [rxn for rxn in self.__reactions if rxn.__ec_number == ec_number][0]
-    #     except Exception:
-    #         raise ValueError(f'Enzyme {ec_number} not found in database')
-
     def getOrganisms(self) -> list:
         """
         Get list of all represented species in BRENDA
@@ -104,7 +98,13 @@ class ReactionList(list):
         try:
             return [rxn for rxn in self if rxn.ec_number == id][0]
         except Exception:
-            raise ValueError(f'Enzyme {id} not found in database')
+            raise ValueError(f'Enzyme with EC {id} not found in database')
+
+    def get_by_name(self, name):
+        try:
+            return [rxn for rxn in self if rxn.name == name][0]
+        except Exception:
+            raise ValueError(f'Enzyme {name} not found in database')
 
 
 class Reaction:
@@ -123,6 +123,32 @@ class Reaction:
                 'Reaction type': self.__reaction_type,
                 'Mechanism': self.__mechanism}
         return pd.DataFrame.from_dict(data, orient='index', columns=[''])
+
+    def _repr_html_(self):
+        """This method is executed automatically by Jupyter to print html!"""
+        return """
+        <table>
+            <tr>
+                <td><strong>Enzyme identifier</strong></td><td>{ec}</td>
+            </tr><tr>
+                <td><strong>Memory address</strong></td>
+                <td>{address}</td>
+            </tr><tr>
+                <td><strong>Name</strong></td><td>{name}</td>
+            </tr><tr>
+                <td><strong>Systematic name</strong></td><td>{sys_name}</td>
+            </tr><tr>
+                <td><strong>Reaction type</strong></td><td>{rxn_type}</td>
+            </tr><tr>
+                <td><strong>Mechanism</strong></td><td>{mechanism}</td>
+            </tr>
+        </table>
+        """.format(ec=self.__ec_number,
+                   address='0x0%x' % id(self),
+                   name=self.__name,
+                   sys_name=self.__systematic_name,
+                   rxn_type=self.__reaction_type,
+                   mechanism=self.__mechanism)
 
     def __extractRegexPattern(self, pattern):
         try:
