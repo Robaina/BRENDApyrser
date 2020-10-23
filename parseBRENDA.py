@@ -94,17 +94,34 @@ class BRENDA:
 
 
 class ReactionList(list):
-    def get_by_id(self, id):
+    def get_by_id(self, id: str):
         try:
             return [rxn for rxn in self if rxn.ec_number == id][0]
         except Exception:
             raise ValueError(f'Enzyme with EC {id} not found in database')
 
-    def get_by_name(self, name):
+    def get_by_name(self, name: str):
         try:
             return [rxn for rxn in self if rxn.name == name][0]
         except Exception:
             raise ValueError(f'Enzyme {name} not found in database')
+
+    def filter_by_organism(self, species: str):
+        def is_contained(p, S): return any([p in s for s in S])
+        return ReactionList(
+                            [rxn for rxn in self if is_contained(species, rxn.getOrganisms())]
+                            )
+
+
+class ReactionDict(dict):
+    def filter_by_organism(self, species: str):
+        filtered_dict = {}
+        def is_contained(p, S): return any([p in s for s in S])
+        for k in self.keys():
+            filtered_values = [v for v in self[k] if is_contained(species, v['species'])]
+            if len(filtered_values) > 0:
+                filtered_dict[k] = filtered_values
+        return ReactionDict(filtered_dict)
 
 
 class Reaction:
@@ -131,9 +148,6 @@ class Reaction:
             <tr>
                 <td><strong>Enzyme identifier</strong></td><td>{ec}</td>
             </tr><tr>
-                <td><strong>Memory address</strong></td>
-                <td>{address}</td>
-            </tr><tr>
                 <td><strong>Name</strong></td><td>{name}</td>
             </tr><tr>
                 <td><strong>Systematic name</strong></td><td>{sys_name}</td>
@@ -144,7 +158,6 @@ class Reaction:
             </tr>
         </table>
         """.format(ec=self.__ec_number,
-                   address='0x0%x' % id(self),
                    name=self.__name,
                    sys_name=self.__systematic_name,
                    rxn_type=self.__reaction_type,
@@ -242,17 +255,20 @@ class Reaction:
 
     def __getDictOfEnzymeActuators(self, pattern: str) -> dict:
         res = {}
+        species_dict = self.getSpecies()
         lines = self.__getDataLines(pattern)
         for line in lines:
             data = self.__extractDataLineInfo(line)
             if data['value'] != 'more':
-                res[data['value']] = {'species': data['species'],
+                res[data['value']] = {'species': [species_dict[s]['name']
+                                                  for s in data['species']],
                                       'meta': data['meta'],
                                       'refs': data['refs']}
-        return res
+        return ReactionDict(res)
 
-    def __getDictOfEnzymeProperties(self, pattern):
+    def __getDictOfEnzymeProperties(self, pattern: str) -> dict:
         res = {}
+        species_dict = self.getSpecies()
         lines = self.__getDataLines(pattern)
         for line in lines:
             data = self.__extractDataLineInfo(line, numeric_value=True)
@@ -261,10 +277,11 @@ class Reaction:
                 if substrate not in res.keys():
                     res[substrate] = []
                 res[substrate].append({'value': data['value'],
-                                       'species': data['species'],
+                                       'species': [species_dict[s]['name']
+                                                   for s in data['species']],
                                        'meta': data['meta'],
                                        'refs': data['refs']})
-        return res
+        return ReactionDict(res)
 
     def __extractTempOrPHData(self, data_type: str) -> list:
         values = []
@@ -356,6 +373,14 @@ class Reaction:
                                           'proteinID': protein_ID,
                                           'refs': res['refs']}
         return species
+
+    def getOrganisms(self) -> list:
+        """
+        Returns a list containing all represented species in the database for this reaction
+        """
+        organisms = list(set([s['name'] for s in self.getSpecies().values()]))
+        organisms.sort()
+        return organisms
 
     def getReferences(self):
         """
