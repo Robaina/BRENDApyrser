@@ -123,14 +123,17 @@ class ReactionDict(dict):
                 filtered_dict[k] = filtered_values
         return ReactionDict(filtered_dict)
 
-
+# TODO: process data line for nechanism so you get reaction plus meta information
+# and take only reaction here.
 class Reaction:
     def __init__(self, reaction_data):
         self.__reaction_data = reaction_data
         self.__ec_number = self.__extractRegexPattern('(?<=ID\t)(.*)(?=\n)')
         self.__systematic_name = self.__extractRegexPattern('(?<=SN\t)(.*)(?=\n)')
         self.__name = self.__extractRegexPattern('(?<=RN\t)(.*)(?=\n)')
-        self.__mechanism = self.__extractRegexPattern('(?<=RE\t)(.*)(?=\n)').replace('=', '<=>')
+        self.__mechanism = (self.__extractRegexPattern('(?<=RE\t)(.*)(?=\n\nREACTION_)',
+                                                       dotall=True).replace('=', '<=>')
+                            .replace('\n\t', ''))
         self.__reaction_type = self.__extractRegexPattern('(?<=RT\t)(.*)(?=\n)')
 
     def __printReactionSummary(self):
@@ -163,9 +166,13 @@ class Reaction:
                    rxn_type=self.__reaction_type,
                    mechanism=self.__mechanism)
 
-    def __extractRegexPattern(self, pattern):
+    def __extractRegexPattern(self, pattern, dotall=False):
+        if dotall:
+            flag = re.DOTALL
+        else:
+            flag = 0
         try:
-            return re.search(pattern, self.__reaction_data).group(1)
+            return re.search(pattern, self.__reaction_data, flags=flag).group(1)
         except Exception:
             return ''
 
