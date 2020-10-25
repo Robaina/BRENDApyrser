@@ -2,6 +2,9 @@ import re
 import numpy as np
 import pandas as pd
 
+_parser_version = '0.1'
+_author = 'Semidán Robaina Estévez, 2020'
+
 fields = {
     'AC': 'activating compound',
     'AP': 'application',
@@ -61,8 +64,29 @@ class BRENDA:
         self.__ec_numbers = [ec.group(1)
                              for ec in re.finditer('(?<=ID\\t)(.*)(?=\\n)', self.__data)]
         self.__reactions = self.__initializeReactionObjects()
-        self.__copyright = """Copyrighted by Dietmar Schomburg, Techn. University Braunschweig,\\
-        GERMANY. Distributed under the License as stated at http:/www.brenda-enzymes.org"""
+        self.__copyright = ("""Copyrighted by Dietmar Schomburg, Techn. University
+        Braunschweig, GERMANY. Distributed under the License as stated
+        at http:/www.brenda-enzymes.org""")
+        self.__fields = fields
+        
+    def _repr_html_(self):
+        """This method is executed automatically by Jupyter to print html!"""
+        return """
+        <table>
+            <tr>
+                <td><strong>Number of Enzymes</strong></td><td>{n_ec}</td>
+            </tr><tr>
+                <td><strong>BRENDA copyright</strong></td><td>{cr}</td>
+            </tr><tr>
+                <td><strong>Parser version</strong></td><td>{parser}</td>
+            </tr><tr>
+                <td><strong>Author</strong></td><td>{author}</td>
+            </tr>
+        </table>
+        """.format(n_ec=len(self.__reactions),
+                   cr=self.__copyright,
+                   parser=_parser_version,
+                   author=_author)
 
     def __getRxnData(self):
         rxn_data = [r.group(0)
@@ -72,6 +96,10 @@ class BRENDA:
 
     def __initializeReactionObjects(self):
         return [Reaction(datum) for datum in self.__getRxnData()]
+    
+    @property
+    def fields(self):
+        return self.__fields
 
     @property
     def reactions(self):
@@ -267,8 +295,8 @@ class Reaction:
         for line in lines:
             data = self.__extractDataLineInfo(line)
             if data['value'] != 'more':
-                res[data['value']] = {'species': [species_dict[s]['name']
-                                                  for s in data['species']],
+                res[data['value']] = {'species': set([species_dict[s]['name']
+                                                  for s in data['species']]),
                                       'meta': data['meta'],
                                       'refs': data['refs']}
         return ReactionDict(res)
@@ -284,8 +312,8 @@ class Reaction:
                 if substrate not in res.keys():
                     res[substrate] = []
                 res[substrate].append({'value': data['value'],
-                                       'species': [species_dict[s]['name']
-                                                   for s in data['species']],
+                                       'species': set([species_dict[s]['name']
+                                                   for s in data['species']]),
                                        'meta': data['meta'],
                                        'refs': data['refs']})
         return ReactionDict(res)
