@@ -68,7 +68,7 @@ class BRENDA:
         Braunschweig, GERMANY. Distributed under the License as stated
         at http:/www.brenda-enzymes.org""")
         self.__fields = fields
-        
+
     def _repr_html_(self):
         """This method is executed automatically by Jupyter to print html!"""
         return """
@@ -96,7 +96,7 @@ class BRENDA:
 
     def __initializeReactionObjects(self):
         return [Reaction(datum) for datum in self.__getRxnData()]
-    
+
     @property
     def fields(self):
         return self.__fields
