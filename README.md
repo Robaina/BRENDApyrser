@@ -30,7 +30,7 @@ brenda
 Braunschweig, GERMANY. Distributed under the License as stated
 at http:/www.brenda-enzymes.org</td>
     </tr><tr>
-        <td><strong>Parser version</strong></td><td>0.1</td>
+        <td><strong>Parser version</strong></td><td>0.0.1</td>
     </tr><tr>
         <td><strong>Author</strong></td><td>Semidán Robaina Estévez, 2020</td>
     </tr>
@@ -70,20 +70,20 @@ r
 
 ```python
 # Here are all the KM values associated with this enzyme
-r.getKMvalues().filter_by_organism('Bos taurus')['ADP'][0]['value']
+r.KMvalues.filter_by_organism('Bos taurus').filter_by_compound('phosphoenolpyruvate').get_values()
 ```
 
 
 
 
-    0.275
+    [0.051500000000000004, 0.18]
 
 
 
 
 ```python
 # We can also get information about operational temperatures of the enzyme
-temp = r.getTemperatureData()
+temp = r.temperature
 ```
 
 
@@ -104,22 +104,38 @@ print([l['value'] for l in temp['range']][0])
 
 
 ```python
-r.getKcatvalues()['phosphoenolpyruvate'][0]
+r.Kcatvalues.filter_by_compound('phosphoenolpyruvate').get_values()
 ```
 
 
 
 
-    {'value': 3.2,
-     'species': {'Homo sapiens'},
-     'meta': '#10# wild type enzyme, in the absenceof K+, in 50 mM Mes-Tris, pH 6.0, at 25Â°C <142>',
-     'refs': ['142']}
+    [3.2,
+     161.0,
+     1182.0,
+     66.0,
+     12.1,
+     13.9,
+     12.2,
+     21.5,
+     232.0,
+     1.97,
+     226.0,
+     41.3,
+     58.4,
+     1.0,
+     0.38,
+     39.67,
+     50.12,
+     73.04,
+     3204.0,
+     1736.0]
 
 
 
 
 ```python
-r.getSubstratesAndProducts()    
+r.substratesAndProducts   
 ```
 
 

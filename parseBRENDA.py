@@ -2,7 +2,7 @@ import re
 import numpy as np
 import pandas as pd
 
-_parser_version = '0.1'
+_parser_version = '0.0.1'
 _author = 'Semidán Robaina Estévez, 2020'
 
 fields = {
@@ -115,7 +115,7 @@ class BRENDA:
         """
         species = set()
         for rxn in self.__reactions:
-            species.update([s['name'] for s in rxn.getSpecies().values()])
+            species.update([s['name'] for s in rxn.proteins.values()])
         species.remove('')
         species = [s for s in species if 'no activity' not in s]
         return species
@@ -137,7 +137,7 @@ class ReactionList(list):
     def filter_by_organism(self, species: str):
         def is_contained(p, S): return any([p in s for s in S])
         return ReactionList(
-                            [rxn for rxn in self if is_contained(species, rxn.getOrganisms())]
+                            [rxn for rxn in self if is_contained(species, rxn.organisms)]
                             )
 
 
@@ -150,6 +150,16 @@ class ReactionDict(dict):
             if len(filtered_values) > 0:
                 filtered_dict[k] = filtered_values
         return ReactionDict(filtered_dict)
+
+    def filter_by_compound(self, compound: str):
+        try:
+            return ReactionDict({compound: self[compound]})
+        except Exception:
+            raise KeyError(f'Invalid compound, valid compounds are: {", ".join(list(self.keys()))}')
+
+    def get_values(self):
+        return [v['value'] for k in self.keys() for v in self[k]]
+
 
 # TODO: process data line for nechanism so you get reaction plus meta information
 # and take only reaction here.
@@ -290,20 +300,20 @@ class Reaction:
 
     def __getDictOfEnzymeActuators(self, pattern: str) -> dict:
         res = {}
-        species_dict = self.getSpecies()
+        species_dict = self.proteins
         lines = self.__getDataLines(pattern)
         for line in lines:
             data = self.__extractDataLineInfo(line)
             if data['value'] != 'more':
                 res[data['value']] = {'species': set([species_dict[s]['name']
-                                                  for s in data['species']]),
+                                                      for s in data['species']]),
                                       'meta': data['meta'],
                                       'refs': data['refs']}
         return ReactionDict(res)
 
     def __getDictOfEnzymeProperties(self, pattern: str) -> dict:
         res = {}
-        species_dict = self.getSpecies()
+        species_dict = self.proteins
         lines = self.__getDataLines(pattern)
         for line in lines:
             data = self.__extractDataLineInfo(line, numeric_value=True)
@@ -313,7 +323,7 @@ class Reaction:
                     res[substrate] = []
                 res[substrate].append({'value': data['value'],
                                        'species': set([species_dict[s]['name']
-                                                   for s in data['species']]),
+                                                       for s in data['species']]),
                                        'meta': data['meta'],
                                        'refs': data['refs']})
         return ReactionDict(res)
@@ -333,35 +343,45 @@ class Reaction:
                            'meta': res['meta'], 'refs': res['refs']})
         return values
 
-    def getCofactors(self):
+    @property
+    def cofactors(self):
         return self.__getDictOfEnzymeActuators('CF')
 
-    def getMetals(self):
+    @property
+    def metals(self):
         return self.__getDictOfEnzymeActuators('ME')
 
-    def getInhibitors(self):
+    @property
+    def inhibitors(self):
         return self.__getDictOfEnzymeActuators('IN')
 
-    def getActivators(self):
+    @property
+    def activators(self):
         return self.__getDictOfEnzymeActuators('AC')
 
-    def getKMvalues(self):
+    @property
+    def KMvalues(self):
         return self.__getDictOfEnzymeProperties('KM')
 
-    def getKIvalues(self):
+    @property
+    def KIvalues(self):
         return self.__getDictOfEnzymeProperties('KI')
 
-    def getKKMvalues(self):
+    @property
+    def KKMvalues(self):
         return self.__getDictOfEnzymeProperties('KKM')
 
-    def getKcatvalues(self):
+    @property
+    def Kcatvalues(self):
         return self.__getDictOfEnzymeProperties('TN')
 
-    def getSpecificActivities(self):
+    @property
+    def specificActivities(self):
         lines = self.__getDataLines('SA')
         return [self.__extractDataLineInfo(line, numeric_value=True) for line in lines]
 
-    def getSubstratesAndProducts(self) -> list:
+    @property
+    def substratesAndProducts(self) -> list:
         """
         Returns list of dicts with evaluated "natural" substrates and products
         of the enzyme across organisms.
@@ -385,17 +405,20 @@ class Reaction:
                     res.append({'substrates': subs, 'products': prods})
         return res
 
-    def getTemperatureData(self):
+    @property
+    def temperature(self):
         return {'optimum': self.__extractTempOrPHData('TO'),
                 'range': self.__extractTempOrPHData('TR'),
                 'stability': self.__extractTempOrPHData('TS')}
 
-    def getPHData(self):
+    @property
+    def PH(self):
         return {'optimum': self.__extractTempOrPHData('PHO'),
                 'range': self.__extractTempOrPHData('PHR'),
                 'stability': self.__extractTempOrPHData('PHS')}
 
-    def getSpecies(self) -> dict:
+    @property
+    def proteins(self) -> dict:
         """
         Returns a dict listing all proteins for given EC number
         """
@@ -409,15 +432,17 @@ class Reaction:
                                           'refs': res['refs']}
         return species
 
-    def getOrganisms(self) -> list:
+    @property
+    def organisms(self) -> list:
         """
         Returns a list containing all represented species in the database for this reaction
         """
-        organisms = list(set([s['name'] for s in self.getSpecies().values()]))
+        organisms = list(set([s['name'] for s in self.proteins.values()]))
         organisms.sort()
         return organisms
 
-    def getReferences(self):
+    @property
+    def references(self):
         """
         Returns a dict listing the bibliography cited for the given EC number
         """
