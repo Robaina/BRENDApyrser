@@ -139,6 +139,17 @@ class BRENDA:
 
 
 class ReactionList(list):
+    # Make ReactionList slicing return ReactionList object
+    def __init__(self, seq=None):
+        super(self.__class__, self).__init__(seq)
+    def __getslice__(self, start, stop):
+        return self.__class__(super(self.__class__, self).__getslice__(start, stop))
+    def __getitem__(self, key):
+        if isinstance(key, slice):
+            return self.__class__(super(self.__class__, self).__getitem__(key))
+        else:
+            return super(self.__class__, self).__getitem__(key) 
+        
     def get_by_id(self, id: str):
         try:
             return [rxn for rxn in self if rxn.ec_number == id][0]
