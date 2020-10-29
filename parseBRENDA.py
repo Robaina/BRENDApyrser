@@ -52,6 +52,18 @@ fields = {
     'TS': 'temperature stability'
 }
 
+units = {
+    'KM': 'mM',
+    'KI': 'mM',
+    'TN': '$s^{-1}$',
+    'SA': '$µmol.min^{-1}.mg^{-1}$',
+    'KKM': '$mM^{-1}.s^{-1}$',
+    'TO': '${}^oC$',
+    'TR': '${}^oC$',
+    'TS': '${}^oC$',
+    'MW': 'Da'
+}
+
 
 class BRENDA:
     """
@@ -68,6 +80,7 @@ class BRENDA:
         Braunschweig, GERMANY. Distributed under the License as stated
         at http:/www.brenda-enzymes.org""")
         self.__fields = fields
+        self.__units = units
 
     def _repr_html_(self):
         """This method is executed automatically by Jupyter to print html!"""
@@ -100,6 +113,10 @@ class BRENDA:
     @property
     def fields(self):
         return self.__fields
+
+    @property
+    def units(self):
+        return self.__units
 
     @property
     def reactions(self):
@@ -136,12 +153,12 @@ class ReactionList(list):
 
     def filter_by_organism(self, species: str):
         def is_contained(p, S): return any([p in s for s in S])
-        return ReactionList(
+        return self.__class__(
                             [rxn for rxn in self if is_contained(species, rxn.organisms)]
                             )
 
 
-class ReactionDict(dict):
+class EnzymeDict(dict):
     def filter_by_organism(self, species: str):
         filtered_dict = {}
         def is_contained(p, S): return any([p in s for s in S])
@@ -149,30 +166,66 @@ class ReactionDict(dict):
             filtered_values = [v for v in self[k] if is_contained(species, v['species'])]
             if len(filtered_values) > 0:
                 filtered_dict[k] = filtered_values
-        return ReactionDict(filtered_dict)
-
-    def filter_by_compound(self, compound: str):
-        try:
-            return ReactionDict({compound: self[compound]})
-        except Exception:
-            raise KeyError(f'Invalid compound, valid compounds are: {", ".join(list(self.keys()))}')
+        return self.__class__(filtered_dict)
 
     def get_values(self):
         return [v['value'] for k in self.keys() for v in self[k]]
 
 
-# TODO: process data line for nechanism so you get reaction plus meta information
-# and take only reaction here.
+class EnzymePropertyDict(EnzymeDict):
+    def filter_by_compound(self, compound: str):
+        try:
+            return self.__class__({compound: self[compound]})
+        except Exception:
+            raise KeyError(f'Invalid compound, valid compounds are: {", ".join(list(self.keys()))}')
+
+
+class EnzymeConditionDict(EnzymeDict):
+    def filter_by_condition(self, condition: str):
+        try:
+            return self.__class__({condition: self[condition]})
+        except Exception:
+            raise KeyError(f'Invalid condition, valid conditions are: {", ".join(list(self.keys()))}')
+
+
 class Reaction:
     def __init__(self, reaction_data):
         self.__reaction_data = reaction_data
         self.__ec_number = self.__extractRegexPattern('(?<=ID\t)(.*)(?=\n)')
         self.__systematic_name = self.__extractRegexPattern('(?<=SN\t)(.*)(?=\n)')
-        self.__name = self.__extractRegexPattern('(?<=RN\t)(.*)(?=\n)')
-        self.__mechanism = (self.__extractRegexPattern('(?<=RE\t)(.*)(?=\n\nREACTION_)',
+        self.__name = self.__extractRegexPattern('(?<=RN\t)(.*)(?=\n)').capitalize()
+        self.__mechanism_str = (self.__extractRegexPattern('(?<=RE\t)(.*)(?=\n\nREACTION_)',
                                                        dotall=True).replace('=', '<=>')
-                            .replace('\n\t', ''))
-        self.__reaction_type = self.__extractRegexPattern('(?<=RT\t)(.*)(?=\n)')
+                               .replace('\n\t', ''))
+        self.__reaction_type = self.__extractRegexPattern('(?<=RT\t)(.*)(?=\n)').capitalize()
+        self.__proteins = self.__getSpeciesDict()
+        self.__references = self.__getReferencesDict()
+        
+    def __getSpeciesDict(self) -> dict:
+        """
+        Returns a dict listing all proteins for given EC number
+        """
+        species = {}
+        lines = self.__getDataLines('PR')
+        for line in lines:
+            res = self.__extractDataLineInfo(line)
+            species_name, protein_ID = self.__splitSpeciesFromProteinID(res['value'])
+            species[res['species'][0]] = {'name': species_name,
+                                          'proteinID': protein_ID,
+                                          'refs': res['refs']}
+        return species
+    
+    def __getReferencesDict(self):
+        """
+        Returns a dict listing the bibliography cited for the given EC number
+        """
+        references = {}
+        lines = self.__getDataLines('RF')
+        for line in lines:
+            line = self.__removeTabs(line)
+            line, refs = self.__extractDataField(line, ('<', '>'))
+            references[refs[0]] = line
+        return references
 
     def __printReactionSummary(self):
         data = {'EC number': self.__ec_number,
@@ -195,14 +248,14 @@ class Reaction:
             </tr><tr>
                 <td><strong>Reaction type</strong></td><td>{rxn_type}</td>
             </tr><tr>
-                <td><strong>Mechanism</strong></td><td>{mechanism}</td>
+                <td><strong>Reaction</strong></td><td>{rxn_str}</td>
             </tr>
         </table>
         """.format(ec=self.__ec_number,
                    name=self.__name,
                    sys_name=self.__systematic_name,
                    rxn_type=self.__reaction_type,
-                   mechanism=self.__mechanism)
+                   rxn_str=self.reaction_str)
 
     def __extractRegexPattern(self, pattern, dotall=False):
         if dotall:
@@ -223,30 +276,6 @@ class Reaction:
         except Exception:
             return []
 
-    @property
-    def summary(self):
-        return self.__printReactionSummary()
-
-    @property
-    def ec_number(self):
-        return self.__ec_number
-
-    @property
-    def name(self):
-        return self.__name
-
-    @property
-    def systematic_name(self):
-        return self.__systematic_name
-
-    @property
-    def mechanism(self):
-        return self.__mechanism
-
-    @property
-    def reaction_type(self):
-        return self.__reaction_type
-
     @staticmethod
     def __removeTabs(line):
         return line.replace('\n', '').replace('\t', '').strip()
@@ -265,10 +294,13 @@ class Reaction:
 
     @staticmethod
     def __eval_range_value(v):
-        if not re.search('\d-\d', v):
-            return float(v)
-        else:
-            return np.mean([float(s) for s in v.split('-')])
+        try:
+            if not re.search('\d-\d', v):
+                return float(v)
+            else:
+                return np.mean([float(s) for s in v.split('-')])
+        except Exception:
+            return -999
 
     @staticmethod
     def __splitSpeciesFromProteinID(line):
@@ -293,27 +325,57 @@ class Reaction:
             value = self.__eval_range_value(line.strip())
         else:
             value = line.strip()
-
         return {'value': value, 'species': species.split(','),
                 'meta': meta, 'refs': refs.split(','),
                 'specific_info': specific_info}
 
+    def __extractReactionMechanismInfo(self, line: str):
+        """
+        Extracts reaction string and mechanism info
+        """
+        line = self.__removeTabs(line)
+        line, meta = self.__extractDataField(line, ('\(', '.*\)'))
+        rxn_str = line.strip()
+        meta_list = []
+        for meta_line in meta.split(';'):
+            meta_line, refs = self.__extractDataField(meta_line, ('<', '>'))
+            meta_line, species = self.__extractDataField(meta_line, ('#', '#'))
+            meta_list.append({'species': species.split(','),
+                              'refs': refs.split(','),
+                              'meta': meta_line.strip()})
+        return (rxn_str, meta_list)
+    
+    def __getBinomialNames(self, species_list: list) -> list:
+        """
+        Returns a list with binomial names mapped to the species codes
+        employed by BRENDA to attach species to protein entries
+        """
+        species_dict = self.__proteins
+        return list(set([species_dict[s]['name'] for s in species_list
+                         if s in species_dict.keys()]))
+    
+    def __getFullReferences(self, refs_list: list) -> list:
+        """
+        Returns a list with full reference mapped to the refs codes
+        employed by BRENDA in each entry
+        """
+        refs_dict = self.__references
+        return [refs_dict[s] for s in refs_list if s in refs_dict.keys()]
+
     def __getDictOfEnzymeActuators(self, pattern: str) -> dict:
         res = {}
-        species_dict = self.proteins
         lines = self.__getDataLines(pattern)
         for line in lines:
             data = self.__extractDataLineInfo(line)
             if data['value'] != 'more':
-                res[data['value']] = {'species': set([species_dict[s]['name']
-                                                      for s in data['species']]),
+                res[data['value']] = {'species': self.__getBinomialNames(data['species']),
                                       'meta': data['meta'],
-                                      'refs': data['refs']}
-        return ReactionDict(res)
+                                      #'refs': data['refs']}
+                                      'refs': self.__getFullReferences(data['refs'])}
+        return EnzymePropertyDict(res)
 
     def __getDictOfEnzymeProperties(self, pattern: str) -> dict:
         res = {}
-        species_dict = self.proteins
         lines = self.__getDataLines(pattern)
         for line in lines:
             data = self.__extractDataLineInfo(line, numeric_value=True)
@@ -322,11 +384,11 @@ class Reaction:
                 if substrate not in res.keys():
                     res[substrate] = []
                 res[substrate].append({'value': data['value'],
-                                       'species': set([species_dict[s]['name']
-                                                       for s in data['species']]),
+                                       'species': self.__getBinomialNames(data['species']),
                                        'meta': data['meta'],
-                                       'refs': data['refs']})
-        return ReactionDict(res)
+                                       #'refs': data['refs']})
+                                       'refs': self.__getFullReferences(data['refs'])})
+        return EnzymePropertyDict(res)
 
     def __extractTempOrPHData(self, data_type: str) -> list:
         values = []
@@ -334,14 +396,47 @@ class Reaction:
         if 'R' not in data_type:
             eval_value = self.__eval_range_value
         else:
-            def eval_value(v): return [float(s) for s in v.split('-')]
+            def eval_value(v):
+                try:
+                    return [float(s) for s in v.split('-')]
+                except Exception:
+                    return [-999, -999]
 
         for line in lines:
-            res = self.__extractDataLineInfo(line)
-            values.append({'value': eval_value(res['value']),
-                           'species': res['species'],
-                           'meta': res['meta'], 'refs': res['refs']})
+            data = self.__extractDataLineInfo(line)
+            values.append({'value': eval_value(data['value']),
+                           'species': self.__getBinomialNames(data['species']),
+                           'meta': data['meta'],
+                           'refs': data['refs']})
         return values
+
+    @property
+    def summary(self):
+        return self.__printReactionSummary()
+
+    @property
+    def ec_number(self):
+        return self.__ec_number
+
+    @property
+    def name(self):
+        return self.__name
+
+    @property
+    def systematic_name(self):
+        return self.__systematic_name
+
+    @property
+    def reaction_str(self):
+        return self.__extractReactionMechanismInfo(self.__mechanism_str)[0]
+
+    @property
+    def mechanism(self):
+        return self.__extractReactionMechanismInfo(self.__mechanism_str)[1]
+
+    @property
+    def reaction_type(self):
+        return self.__reaction_type
 
     @property
     def cofactors(self):
@@ -407,30 +502,19 @@ class Reaction:
 
     @property
     def temperature(self):
-        return {'optimum': self.__extractTempOrPHData('TO'),
+        return EnzymeConditionDict({'optimum': self.__extractTempOrPHData('TO'),
                 'range': self.__extractTempOrPHData('TR'),
-                'stability': self.__extractTempOrPHData('TS')}
+                'stability': self.__extractTempOrPHData('TS')})
 
     @property
     def PH(self):
-        return {'optimum': self.__extractTempOrPHData('PHO'),
+        return EnzymeConditionDict({'optimum': self.__extractTempOrPHData('PHO'),
                 'range': self.__extractTempOrPHData('PHR'),
-                'stability': self.__extractTempOrPHData('PHS')}
+                'stability': self.__extractTempOrPHData('PHS')})
 
     @property
     def proteins(self) -> dict:
-        """
-        Returns a dict listing all proteins for given EC number
-        """
-        species = {}
-        lines = self.__getDataLines('PR')
-        for line in lines:
-            res = self.__extractDataLineInfo(line)
-            species_name, protein_ID = self.__splitSpeciesFromProteinID(res['value'])
-            species[res['species'][0]] = {'name': species_name,
-                                          'proteinID': protein_ID,
-                                          'refs': res['refs']}
-        return species
+        return self.__proteins
 
     @property
     def organisms(self) -> list:
@@ -443,13 +527,5 @@ class Reaction:
 
     @property
     def references(self):
-        """
-        Returns a dict listing the bibliography cited for the given EC number
-        """
-        references = {}
-        lines = self.__getDataLines('RF')
-        for line in lines:
-            line = self.__removeTabs(line)
-            line, refs = self.__extractDataField(line, ('<', '>'))
-            references[refs[0]] = line
-        return references
+        return self.__references
+

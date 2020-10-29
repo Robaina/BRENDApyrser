@@ -6,10 +6,14 @@ This is an ongoing project!
 
 
 ```python
+import numpy as np
+from matplotlib import pyplot as plt
 from parseBRENDA import BRENDA
 workDir = 'C:/Users/tinta/OneDrive/Documents/Projects/BRENDA'
 dataFile = workDir + '/brenda_download.txt'
 ```
+
+## 1. Parsing BRENDA
 
 
 ```python
@@ -41,6 +45,69 @@ at http:/www.brenda-enzymes.org</td>
 
 
 ```python
+# Plot all Km values in the database
+BRENDA_KMs = np.array([v for r in brenda.reactions
+                       for v in r.KMvalues.get_values()])
+values = BRENDA_KMs[(BRENDA_KMs < 1000) & (BRENDA_KMs >= 0)]
+plt.hist(values)
+plt.title(f'Median KM value: {np.median(values)}')
+plt.xlabel('KM (mM)')
+plt.show()
+print(f'Minimum and maximum values in database: {values.min()} mM, {values.max()} mM')
+```
+
+
+![png](README_files/README_4_0.png)
+
+
+    Minimum and maximum values in database: 0.0 mM, 999.8 mM
+
+
+
+```python
+# Plot all Km values in the database
+BRENDA_Kcats = np.array([v for r in brenda.reactions
+                       for v in r.Kcatvalues.get_values()])
+values = BRENDA_Kcats[(BRENDA_Kcats < 1000) & (BRENDA_Kcats >= 0)]
+plt.hist(values)
+plt.title(f'Median Kcat value: {np.median(values)}')
+plt.xlabel('Kcat (1/s)')
+plt.show()
+print(f'Minimum and maximum values in database: {values.min()} 1/s, {values.max()} 1/s')
+```
+
+
+![png](README_files/README_5_0.png)
+
+
+    Minimum and maximum values in database: 5.83e-10 1/s, 997.0 1/s
+
+
+
+```python
+# Plot all enzyme optimal temperature values in the database
+BRENDA_TO = np.array([v for r in brenda.reactions
+                       for v in r.temperature.filter_by_condition(
+                           'optimum').get_values()])
+values = BRENDA_TO[(BRENDA_TO >= 0)]
+plt.hist(values)
+plt.title(f'Median Optimum Temperature: {np.median(values)}')
+plt.xlabel('TO (${}^oC$)')
+plt.show()
+print(f'Minimum and maximum values in database: {values.min()} °C, {values.max()} °C')
+```
+
+
+![png](README_files/README_6_0.png)
+
+
+    Minimum and maximum values in database: 0.0 °C, 125.0 °C
+
+
+## 2. Extracting data for _Pyruvate kinase_
+
+
+```python
 # We can retrieve an enzyme entry by its EC number like this
 r = brenda.reactions.get_by_id('2.7.1.40')
 r
@@ -54,13 +121,13 @@ r
     <tr>
         <td><strong>Enzyme identifier</strong></td><td>2.7.1.40</td>
     </tr><tr>
-        <td><strong>Name</strong></td><td>pyruvate kinase</td>
+        <td><strong>Name</strong></td><td>Pyruvate kinase</td>
     </tr><tr>
         <td><strong>Systematic name</strong></td><td>ATP:pyruvate 2-O-phosphotransferase</td>
     </tr><tr>
-        <td><strong>Reaction type</strong></td><td>phospho group transfer</td>
+        <td><strong>Reaction type</strong></td><td>Phospho group transfer</td>
     </tr><tr>
-        <td><strong>Mechanism</strong></td><td>ATP + pyruvate <=> ADP + phosphoenolpyruvate (#6,23,32,49,69,70,92#mechanism <5,92>; #69# compulsory-ordered tri-bi mechanism <100>; #103#model for allosteric regulation <91>; #120,121# allosteric enzyme <98>;#16,18,36# allosteric enzyme: homotropic <73,74,75>; #12# hyperbolickinetics <96>; #118# sigmoidal kinetics with respect tophosphoenolpyruvate <93>; #52# catalyzes the addition of a proton andthe loss of a phosphoryl group which is transferred to ADP <48>; #98#sigmoidal saturation curves with substrate and metal ions <89>; #140#modeling of the catalytic mechanism, overview <248>; #149# the kineticmechanism is random order with a rapid equilibrium <255>)</td>
+        <td><strong>Reaction</strong></td><td>ATP + pyruvate <=> ADP + phosphoenolpyruvate</td>
     </tr>
 </table>
 
@@ -69,7 +136,37 @@ r
 
 
 ```python
-# Here are all the KM values associated with this enzyme
+# Here are all the KM values for phosphoenolpyruvate associated with this enzyme class
+compound = 'phosphoenolpyruvate'
+kms = r.KMvalues.filter_by_compound(compound).get_values()
+plt.hist(kms)
+plt.xlabel('KM (mM)')
+plt.title(f'{r.name} ({compound})')
+plt.show()
+```
+
+
+![png](README_files/README_9_0.png)
+
+
+
+```python
+# Here are all the KM values for phosphoenolpyruvate associated with this enzyme class
+compound = 'phosphoenolpyruvate'
+kms = r.KMvalues.filter_by_compound(compound).get_values()
+plt.hist(kms)
+plt.xlabel('KM (mM)')
+plt.title(f'{r.name} ({compound})')
+plt.show()
+```
+
+
+![png](README_files/README_10_0.png)
+
+
+
+```python
+# And further filtered by organism
 r.KMvalues.filter_by_organism('Bos taurus').filter_by_compound('phosphoenolpyruvate').get_values()
 ```
 
@@ -82,73 +179,14 @@ r.KMvalues.filter_by_organism('Bos taurus').filter_by_compound('phosphoenolpyruv
 
 
 ```python
-# We can also get information about operational temperatures of the enzyme
-temp = r.temperature
+# Here are all the Kcat values for phosphoenolpyruvate associated with this enzyme class
+compound = 'phosphoenolpyruvate'
+kcats = r.Kcatvalues.filter_by_compound(compound).get_values()
+plt.hist(kcats)
+plt.xlabel('Kcat ($s^{-1}$)')
+plt.title(f'{r.name} ({compound})')
+plt.show()
 ```
 
 
-```python
-print([l['value'] for l in temp['optimum']])
-```
-
-    [30.0, 37.0, 95.0, 22.0, 23.0, 44.0, 28.0, 40.0, 55.0, 45.0, -999.0, 60.0, 15.0, 20.5, 85.0, 50.0, 80.0, 25.0, 98.0]
-    
-
-
-```python
-print([l['value'] for l in temp['range']][0])
-```
-
-    [35.0, 53.0]
-    
-
-
-```python
-r.Kcatvalues.filter_by_compound('phosphoenolpyruvate').get_values()
-```
-
-
-
-
-    [3.2,
-     161.0,
-     1182.0,
-     66.0,
-     12.1,
-     13.9,
-     12.2,
-     21.5,
-     232.0,
-     1.97,
-     226.0,
-     41.3,
-     58.4,
-     1.0,
-     0.38,
-     39.67,
-     50.12,
-     73.04,
-     3204.0,
-     1736.0]
-
-
-
-
-```python
-r.substratesAndProducts   
-```
-
-
-
-
-    [{'substrates': ['AKT1S1', 'ATP'], 'products': ['ADP', 'phospho-AKT1S1']},
-     {'substrates': ['TDP', 'phosphoenolpyruvate'],
-      'products': ['TTP', 'pyruvate | 95% yield |']},
-     {'substrates': ['ATP', 'pyruvate'],
-      'products': ['ADP', 'phosphoenolpyruvate']},
-     {'substrates': ['ADP', 'phosphoenolpyruvate'],
-      'products': ['ATP', 'pyruvate']},
-     {'substrates': ['ATP', 'prothymosin alpha'],
-      'products': ['ADP', 'phospho-prothymosin alpha']}]
-
-
+![png](README_files/README_12_0.png)
