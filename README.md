@@ -46,7 +46,7 @@ at http:/www.brenda-enzymes.org</td>
 
 ```python
 # Plot all Km values in the database
-BRENDA_KMs = np.array([v for r in brenda.reactions
+BRENDA_KMs = np.array([v for r in brenda.reactions 
                        for v in r.KMvalues.get_values()])
 values = BRENDA_KMs[(BRENDA_KMs < 1000) & (BRENDA_KMs >= 0)]
 plt.hist(values)
@@ -57,16 +57,16 @@ print(f'Minimum and maximum values in database: {values.min()} mM, {values.max()
 ```
 
 
-![png](README_files/README_4_0.png)
+![png](output_4_0.png)
 
 
     Minimum and maximum values in database: 0.0 mM, 999.8 mM
-
+    
 
 
 ```python
 # Plot all Km values in the database
-BRENDA_Kcats = np.array([v for r in brenda.reactions
+BRENDA_Kcats = np.array([v for r in brenda.reactions 
                        for v in r.Kcatvalues.get_values()])
 values = BRENDA_Kcats[(BRENDA_Kcats < 1000) & (BRENDA_Kcats >= 0)]
 plt.hist(values)
@@ -77,16 +77,16 @@ print(f'Minimum and maximum values in database: {values.min()} 1/s, {values.max(
 ```
 
 
-![png](README_files/README_5_0.png)
+![png](output_5_0.png)
 
 
     Minimum and maximum values in database: 5.83e-10 1/s, 997.0 1/s
-
+    
 
 
 ```python
 # Plot all enzyme optimal temperature values in the database
-BRENDA_TO = np.array([v for r in brenda.reactions
+BRENDA_TO = np.array([v for r in brenda.reactions 
                        for v in r.temperature.filter_by_condition(
                            'optimum').get_values()])
 values = BRENDA_TO[(BRENDA_TO >= 0)]
@@ -98,11 +98,38 @@ print(f'Minimum and maximum values in database: {values.min()} °C, {values.max(
 ```
 
 
-![png](README_files/README_6_0.png)
+![png](output_6_0.png)
 
 
     Minimum and maximum values in database: 0.0 °C, 125.0 °C
+    
 
+We see that the median optimal temperature for all enzymes in the BRENDA database is 37 °C! That's interesting... perhaps all organisms have agreed to prefer that temperature over other ones... or, more likely, it could be that BRENDA database is biased towards mammals and microorganisms that live within mammals... sucha as human pathogens.
+
+Let's filter results for a particular species, let's try with a hyperthermophylic baterial genus, _Thermotoga_
+
+
+```python
+# Plot all enzyme optimal temperature values in the database
+species = 'Thermotoga'
+BRENDA_TO = np.array([v for r in brenda.reactions.filter_by_organism(species)
+                       for v in r.temperature.filter_by_condition('optimum').filter_by_organism(species).get_values()])
+values = BRENDA_TO[(BRENDA_TO >= 0)]
+plt.hist(values)
+plt.title(f'Median Optimum Temperature: {np.median(values)}')
+plt.xlabel('TO (${}^oC$)')
+plt.show()
+print(f'Minimum and maximum values in database: {values.min()} °C, {values.max()} °C')
+```
+
+
+![png](output_8_0.png)
+
+
+    Minimum and maximum values in database: 20.0 °C, 105.0 °C
+    
+
+We can see that the median optimal temperature among all enzymes in the genus, 80°C, is much higher than in the case of the entire database. That's consistent with the fact that _Thermotoga_ are hyperthermophylic... alright!
 
 ## 2. Extracting data for _Pyruvate kinase_
 
@@ -146,22 +173,22 @@ plt.show()
 ```
 
 
-![png](README_files/README_9_0.png)
+![png](output_12_0.png)
 
 
 
 ```python
 # Here are all the KM values for phosphoenolpyruvate associated with this enzyme class
 compound = 'phosphoenolpyruvate'
-kms = r.KMvalues.filter_by_compound(compound).get_values()
-plt.hist(kms)
+KMs = r.KMvalues.filter_by_compound(compound).get_values()
+plt.hist(KMs)
 plt.xlabel('KM (mM)')
 plt.title(f'{r.name} ({compound})')
 plt.show()
 ```
 
 
-![png](README_files/README_10_0.png)
+![png](output_13_0.png)
 
 
 
@@ -189,4 +216,49 @@ plt.show()
 ```
 
 
-![png](README_files/README_12_0.png)
+![png](output_15_0.png)
+
+
+
+```python
+r.substratesAndProducts   
+```
+
+
+
+
+    [{'substrates': ['AKT1S1', 'ATP'], 'products': ['ADP', 'phospho-AKT1S1']},
+     {'substrates': ['TDP', 'phosphoenolpyruvate'],
+      'products': ['TTP', 'pyruvate | 95% yield |']},
+     {'substrates': ['ATP', 'pyruvate'],
+      'products': ['ADP', 'phosphoenolpyruvate']},
+     {'substrates': ['ADP', 'phosphoenolpyruvate'],
+      'products': ['ATP', 'pyruvate']},
+     {'substrates': ['ATP', 'prothymosin alpha'],
+      'products': ['ADP', 'phospho-prothymosin alpha']}]
+
+
+
+## 3 Finding all KM values for a given substrate and organism
+Next, we will retrieve KM values associated to a particular substrate for all enzymes in a given species. Will t he KM values distribute around a narrow or wider concentration range? Since substrate concentration in cytoplasma is the same for all enzymes it makes sense that all cytoplasmi enzymes utilizing that substrate have similar KM values. Let's test this idea with _Escherichia coli_ and some common substrates participating in the central carbon metabolism.
+
+
+```python
+species, compound = 'Escherichia coli', 'NADH'
+KMs = np.array([v for r in brenda.reactions.filter_by_organism(species)
+                for v in r.KMvalues.filter_by_compound(compound).filter_by_organism(species).get_values()])
+
+if len(KMs) > 0:
+    plt.hist(KMs)
+    plt.xlabel('KM (mM)')
+    plt.title(f'{species} KMs ({compound}), median = {np.median((KMs))}')
+    plt.show()
+else:
+    print('No KM values for compound')
+```
+
+
+![png](output_18_0.png)
+
+
+That's interesting! typical NADH concentrations are low in _Escherichia coli_, e.g., from [BioNumbers](http://book.bionumbers.org/what-are-the-concentrations-of-free-metabolites-in-cells/) we get a value of 0.083 mM. The median KM value for NADH among all enzymes binding it is lower as we see in the plot above! Hence, it looks like most enzymes are (nearly) saturated for NADH and thus fluxes are sort of independent of NADH concentration.

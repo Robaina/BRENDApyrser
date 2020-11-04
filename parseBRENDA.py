@@ -134,8 +134,21 @@ class BRENDA:
         for rxn in self.__reactions:
             species.update([s['name'] for s in rxn.proteins.values()])
         species.remove('')
-        species = [s for s in species if 'no activity' not in s]
+        species = list(set([s for s in species if 'no activity' not in s]))
         return species
+    
+    def getKMcompounds(self) -> list:
+        """
+        Get list of all substrates in BRENDA with KM data
+        """
+        cpds = set()
+        for rxn in self.__reactions:
+            cpds.update([s for s in rxn.KMvalues.keys()])
+        try:
+            cpds.remove('')
+        except Exception:
+            pass
+        return list(cpds)
 
 
 class ReactionList(list):
@@ -158,19 +171,20 @@ class ReactionList(list):
 
     def get_by_name(self, name: str):
         try:
-            return [rxn for rxn in self if rxn.name == name][0]
+            return [rxn for rxn in self if rxn.name.lower() == name.lower()][0]
         except Exception:
             raise ValueError(f'Enzyme {name} not found in database')
 
     def filter_by_organism(self, species: str):
-        def is_contained(p, S): return any([p in s for s in S])
+        def is_contained(p, S): return any([p in s.lower() for s in S])
         return self.__class__(
-                            [rxn for rxn in self if is_contained(species, rxn.organisms)]
+                            [rxn for rxn in self if is_contained(species.lower(), rxn.organisms)]
                             )
 
 
 class EnzymeDict(dict):
     def filter_by_organism(self, species: str):
+        # filtered_dict = {species: []}
         filtered_dict = {}
         def is_contained(p, S): return any([p in s for s in S])
         for k in self.keys():
@@ -188,7 +202,8 @@ class EnzymePropertyDict(EnzymeDict):
         try:
             return self.__class__({compound: self[compound]})
         except Exception:
-            raise KeyError(f'Invalid compound, valid compounds are: {", ".join(list(self.keys()))}')
+            return self.__class__({compound: []})
+            # raise KeyError(f'Invalid compound, valid compounds are: {", ".join(list(self.keys()))}')
 
 
 class EnzymeConditionDict(EnzymeDict):
