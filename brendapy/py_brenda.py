@@ -2,7 +2,7 @@ import re
 import numpy as np
 import pandas as pd
 
-_parser_version = '0.0.1'
+_parser_version = '0.1.0'
 _author = 'Semidán Robaina Estévez, 2020'
 
 fields = {
@@ -136,7 +136,7 @@ class BRENDA:
         species.remove('')
         species = list(set([s for s in species if 'no activity' not in s]))
         return species
-    
+
     def getKMcompounds(self) -> list:
         """
         Get list of all substrates in BRENDA with KM data
@@ -155,14 +155,16 @@ class ReactionList(list):
     # Make ReactionList slicing return ReactionList object
     def __init__(self, seq=None):
         super(self.__class__, self).__init__(seq)
+
     def __getslice__(self, start, stop):
         return self.__class__(super(self.__class__, self).__getslice__(start, stop))
+
     def __getitem__(self, key):
         if isinstance(key, slice):
             return self.__class__(super(self.__class__, self).__getitem__(key))
         else:
-            return super(self.__class__, self).__getitem__(key) 
-        
+            return super(self.__class__, self).__getitem__(key)
+
     def get_by_id(self, id: str):
         try:
             return [rxn for rxn in self if rxn.ec_number == id][0]
@@ -226,7 +228,7 @@ class Reaction:
         self.__reaction_type = self.__extractRegexPattern('(?<=RT\t)(.*)(?=\n)').capitalize()
         self.__proteins = self.__getSpeciesDict()
         self.__references = self.__getReferencesDict()
-        
+
     def __getSpeciesDict(self) -> dict:
         """
         Returns a dict listing all proteins for given EC number
@@ -240,7 +242,7 @@ class Reaction:
                                           'proteinID': protein_ID,
                                           'refs': res['refs']}
         return species
-    
+
     def __getReferencesDict(self):
         """
         Returns a dict listing the bibliography cited for the given EC number
@@ -370,7 +372,7 @@ class Reaction:
                               'refs': refs.split(','),
                               'meta': meta_line.strip()})
         return (rxn_str, meta_list)
-    
+
     def __getBinomialNames(self, species_list: list) -> list:
         """
         Returns a list with binomial names mapped to the species codes
@@ -379,7 +381,7 @@ class Reaction:
         species_dict = self.__proteins
         return list(set([species_dict[s]['name'] for s in species_list
                          if s in species_dict.keys()]))
-    
+
     def __getFullReferences(self, refs_list: list) -> list:
         """
         Returns a list with full reference mapped to the refs codes
@@ -529,14 +531,14 @@ class Reaction:
     @property
     def temperature(self):
         return EnzymeConditionDict({'optimum': self.__extractTempOrPHData('TO'),
-                'range': self.__extractTempOrPHData('TR'),
-                'stability': self.__extractTempOrPHData('TS')})
+                                    'range': self.__extractTempOrPHData('TR'),
+                                    'stability': self.__extractTempOrPHData('TS')})
 
     @property
     def PH(self):
         return EnzymeConditionDict({'optimum': self.__extractTempOrPHData('PHO'),
-                'range': self.__extractTempOrPHData('PHR'),
-                'stability': self.__extractTempOrPHData('PHS')})
+                                    'range': self.__extractTempOrPHData('PHR'),
+                                    'stability': self.__extractTempOrPHData('PHS')})
 
     @property
     def proteins(self) -> dict:
@@ -554,4 +556,3 @@ class Reaction:
     @property
     def references(self):
         return self.__references
-
