@@ -27,6 +27,6 @@ setup(
     packages=find_packages(),
     zip_safe=False,
     install_requires=['numpy', 'pandas']
-    # include_package_data=True, # to include data files in installation
+    include_package_data=False, # to include data files in installation
     # package_data={'': ['data/*.csv']},
 )
