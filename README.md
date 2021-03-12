@@ -2,13 +2,17 @@
 
 This project provides python classes and functions to parse the text file containing the entire BRENDA enzyme database (https://www.brenda-enzymes.org)
 
+## Installation
+1. Git clone project to local directory
+2. In terminal navigate to directory and enter: python setup.py install
+
 This is an ongoing project!
 
 
 ```python
 import numpy as np
 from matplotlib import pyplot as plt
-from parseBRENDA import BRENDA
+from brendapyrser import BRENDA
 workDir = 'C:/Users/tinta/OneDrive/Documents/Projects/BRENDA'
 dataFile = workDir + '/brenda_download.txt'
 ```
