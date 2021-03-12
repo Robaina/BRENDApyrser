@@ -177,20 +177,6 @@ plt.show()
 
 
 
-```python
-# Here are all the KM values for phosphoenolpyruvate associated with this enzyme class
-compound = 'phosphoenolpyruvate'
-KMs = r.KMvalues.filter_by_compound(compound).get_values()
-plt.hist(KMs)
-plt.xlabel('KM (mM)')
-plt.title(f'{r.name} ({compound})')
-plt.show()
-```
-
-
-![png](README_files/output_13_0.png)
-
-
 
 ```python
 # And further filtered by organism
