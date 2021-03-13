@@ -6,6 +6,9 @@ This project provides python classes and functions to parse the text file contai
 1. Git clone project to local directory
 2. In terminal navigate to directory and enter: python setup.py install
 
+## Usage
+The BRENDA database is not included in _brendapyrser_ It has to be downloaded as a txt file (brenda_download.txt) from: https://www.brenda-enzymes.org/download_brenda_without_registration.php.
+
 This is an ongoing project!
 
 
@@ -13,7 +16,7 @@ This is an ongoing project!
 import numpy as np
 from matplotlib import pyplot as plt
 from brendapyrser import BRENDA
-workDir = 'C:/Users/tinta/OneDrive/Documents/Projects/BRENDA'
+workDir = 'Documents/Projects/BRENDA'
 dataFile = workDir + '/brenda_download.txt'
 ```
 
@@ -249,6 +252,3 @@ else:
 
 
 ![png](README_files/output_18_0.png)
-
-
-That's interesting! typical NADH concentrations are low in _Escherichia coli_, e.g., from [BioNumbers](http://book.bionumbers.org/what-are-the-concentrations-of-free-metabolites-in-cells/) we get a value of 0.083 mM. The median KM value for NADH among all enzymes binding it is lower as we see in the plot above! Hence, it looks like most enzymes are (nearly) saturated for NADH and thus fluxes are sort of independent of NADH concentration.
