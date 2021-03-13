@@ -41,7 +41,7 @@ brenda
 Braunschweig, GERMANY. Distributed under the License as stated
 at http:/www.brenda-enzymes.org</td>
     </tr><tr>
-        <td><strong>Parser version</strong></td><td>0.0.1</td>
+        <td><strong>Parser version</strong></td><td>0.1.0</td>
     </tr><tr>
         <td><strong>Author</strong></td><td>Semidán Robaina Estévez, 2020</td>
     </tr>

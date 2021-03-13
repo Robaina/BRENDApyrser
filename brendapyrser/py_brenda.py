@@ -1,9 +1,9 @@
+__version__ = '0.1.0'
+__author__ = 'Semidán Robaina Estévez, 2020'
+
 import re
 import numpy as np
 import pandas as pd
-
-_parser_version = '0.1.0'
-_author = 'Semidán Robaina Estévez, 2020'
 
 fields = {
     'AC': 'activating compound',
@@ -98,8 +98,8 @@ class BRENDA:
         </table>
         """.format(n_ec=len(self.__reactions),
                    cr=self.__copyright,
-                   parser=_parser_version,
-                   author=_author)
+                   parser=__version__,
+                   author=__author__)
 
     def __getRxnData(self):
         rxn_data = [r.group(0)
