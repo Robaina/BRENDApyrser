@@ -1,0 +1,2 @@
+prune data code_oven README_files .ipynb_checkpoints
+exclude README.ipynb gitignore
