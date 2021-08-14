@@ -14,7 +14,6 @@ This is an ongoing project!
 ```python
 import numpy as np
 from matplotlib import pyplot as plt
-from fuzzywuzzy import process
 from brendapyrser import BRENDA
 
 dataFile = 'data/brenda_download.txt'
