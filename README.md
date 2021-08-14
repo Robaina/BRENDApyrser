@@ -64,7 +64,7 @@ print(f'Minimum and maximum values in database: {values.min()} mM, {values.max()
 ```
 
 
-![png](README_files/output_4_0.png)
+![png](https://github.com/Robaina/BRENDA_database/blob/master/README_files/output_4_0.png)
 
 
     Minimum and maximum values in database: 0.0 mM, 999.8 mM
@@ -84,7 +84,7 @@ print(f'Minimum and maximum values in database: {values.min()} 1/s, {values.max(
 ```
 
 
-![png](README_files/output_5_0.png)
+![png](https://github.com/Robaina/BRENDA_database/blob/master/README_files/output_5_0.png)
 
 
     Minimum and maximum values in database: 5.83e-10 1/s, 997.0 1/s
@@ -105,7 +105,7 @@ print(f'Minimum and maximum values in database: {values.min()} °C, {values.max(
 ```
 
 
-![png](README_files/output_6_0.png)
+![png](https://github.com/Robaina/BRENDA_database/blob/master/README_files/output_6_0.png)
 
 
     Minimum and maximum values in database: 0.0 °C, 125.0 °C
@@ -130,7 +130,7 @@ print(f'Minimum and maximum values in database: {values.min()} °C, {values.max(
 ```
 
 
-![png](README_files/output_8_0.png)
+![png](https://github.com/Robaina/BRENDA_database/blob/master/README_files/output_8_0.png)
 
 
     Minimum and maximum values in database: 20.0 °C, 105.0 °C
@@ -180,7 +180,7 @@ plt.show()
 ```
 
 
-![png](README_files/output_12_0.png)
+![png](https://github.com/Robaina/BRENDA_database/blob/master/README_files/output_12_0.png)
 
 
 
@@ -195,7 +195,7 @@ plt.show()
 ```
 
 
-![png](README_files/output_13_0.png)
+![png](https://github.com/Robaina/BRENDA_database/blob/master/README_files/output_13_0.png)
 
 
 
@@ -223,7 +223,7 @@ plt.show()
 ```
 
 
-![png](README_files/output_15_0.png)
+![png](https://github.com/Robaina/BRENDA_database/blob/master/README_files/output_15_0.png)
 
 
 
@@ -265,7 +265,7 @@ else:
 ```
 
 
-![png](README_files/output_18_0.png)
+![png](https://github.com/Robaina/BRENDA_database/blob/master/README_files/output_18_0.png)
 
 
 That's interesting! typical NADH concentrations are low in _Escherichia coli_, e.g., from [BioNumbers](http://book.bionumbers.org/what-are-the-concentrations-of-free-metabolites-in-cells/) we get a value of 0.083 mM. The median KM value for NADH among all enzymes binding it is lower as we see in the plot above! Hence, it looks like most enzymes are (nearly) saturated for NADH and thus fluxes are sort of independent of NADH concentration.
