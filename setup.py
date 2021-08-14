@@ -1,32 +1,24 @@
-from setuptools import setup #, find_packages
-# import importlib
+from setuptools import setup
+from os import path
 
+this_directory = path.abspath(path.dirname(__file__))
+with open(path.join(this_directory, 'README.md'), 'r', encoding='utf-8') as f:
+    long_description = f.read()
 
-# def check_package(package):
-#     try:
-#         importlib.import_module(package)
-#     except Exception:
-#         raise ImportError("Requires {package} to "
-#                           "be installed before running setup.py (pip install {package})"
-#                           .format(package=package))
-#     finally:
-#         pass
-#
-#
-# _ = [check_package(p) for p in ['numpy', 'pandas']]
 
 setup(
     name='brendapyrser',
-    version='0.1.0',
+    version='0.0.1',
     description='Tools to parse de BRENDA database',
-    # long_description=open('DESCRIPTION.rst').read(),
-    url='https://github.com/Robaina/BRENDA_database',
-    author='Semidan Robaina Estevez',
-    author_email='semidan.robaina@gmail.com',
+    long_description=long_description,
+    long_description_content_type='text/markdown',
+    url='https://github.com/robaina/BRENDA_database',
+    donwload_url='https://github.com/robaina/BRENDA_database',
+    author='Semidán Robaina Estévez',
+    author_email='srobaina@ull.edu.es',
+    maintainer='Semidán Robaina Estévez',
+    maintainer_email='srobaina@ull.edu.es',
     license='Creative Commons Attribution 4.0 International',
-    # packages=find_packages(),
-    zip_safe=False,
     install_requires=['numpy', 'pandas'],
-    # include_package_data=False,  # to include data files in installation
-    # package_data={'': ['data/*.csv']},
+    packages=['brendapyrser']
 )

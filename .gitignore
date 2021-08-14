@@ -1,3 +1,4 @@
 *.txt
 /code_oven
 /data
+/.ipynb_checkpoints

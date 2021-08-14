@@ -1,13 +1,12 @@
 # A python parser for the BRENDA database
 
-This project provides python classes and functions to parse the text file containing the entire BRENDA enzyme database (https://www.brenda-enzymes.org)
-
 ## Installation
-1. Git clone project to local directory
-2. In terminal navigate to directory and enter: python setup.py install
+1. ```pip install brendapyrser```
+2. Git clone project to local directory.
 
-## Usage
-The BRENDA database is not included in _brendapyrser_ It has to be downloaded as a txt file (brenda_download.txt) from: https://www.brenda-enzymes.org/download_brenda_without_registration.php.
+   In terminal navigate to directory and enter: ```python setup.py install```
+
+Due to BRENDA's license, BRENDA's database cannot be downloaded directly by the parser, instead, the user is asked to download the database as a text file after accepting usage conditions [here](https://www.brenda-enzymes.org/download_brenda_without_registration.php).
 
 This is an ongoing project!
 
@@ -15,9 +14,10 @@ This is an ongoing project!
 ```python
 import numpy as np
 from matplotlib import pyplot as plt
+from fuzzywuzzy import process
 from brendapyrser import BRENDA
-workDir = 'Documents/Projects/BRENDA'
-dataFile = workDir + '/brenda_download.txt'
+
+dataFile = 'data/brenda_download.txt'
 ```
 
 ## 1. Parsing BRENDA
@@ -41,7 +41,7 @@ brenda
 Braunschweig, GERMANY. Distributed under the License as stated
 at http:/www.brenda-enzymes.org</td>
     </tr><tr>
-        <td><strong>Parser version</strong></td><td>0.1.0</td>
+        <td><strong>Parser version</strong></td><td>0.0.1</td>
     </tr><tr>
         <td><strong>Author</strong></td><td>Semidán Robaina Estévez, 2020</td>
     </tr>
@@ -111,7 +111,7 @@ print(f'Minimum and maximum values in database: {values.min()} °C, {values.max(
     Minimum and maximum values in database: 0.0 °C, 125.0 °C
 
 
-We see that the median optimal temperature for all enzymes in the BRENDA database is 37 °C! That's interesting... perhaps all organisms have agreed to prefer that temperature over other ones... or, more likely, it could be that BRENDA database is biased towards mammals and microorganisms that live within mammals... sucha as human pathogens.
+We see that the median optimal temperature for all enzymes in the BRENDA database is 37 °C! That's interesting... perhaps all organisms have agreed to prefer that temperature over other ones... or, more likely, it could be that BRENDA database is biased towards mammals and microorganisms that live within mammals... such as human pathogens.
 
 Let's filter results for a particular species, let's try with a hyperthermophylic baterial genus, _Thermotoga_
 
@@ -184,6 +184,20 @@ plt.show()
 
 
 
+```python
+# Here are all the KM values for phosphoenolpyruvate associated with this enzyme class
+compound = 'phosphoenolpyruvate'
+KMs = r.KMvalues.filter_by_compound(compound).get_values()
+plt.hist(KMs)
+plt.xlabel('KM (mM)')
+plt.title(f'{r.name} ({compound})')
+plt.show()
+```
+
+
+![png](README_files/output_13_0.png)
+
+
 
 ```python
 # And further filtered by organism
@@ -252,3 +266,6 @@ else:
 
 
 ![png](README_files/output_18_0.png)
+
+
+That's interesting! typical NADH concentrations are low in _Escherichia coli_, e.g., from [BioNumbers](http://book.bionumbers.org/what-are-the-concentrations-of-free-metabolites-in-cells/) we get a value of 0.083 mM. The median KM value for NADH among all enzymes binding it is lower as we see in the plot above! Hence, it looks like most enzymes are (nearly) saturated for NADH and thus fluxes are sort of independent of NADH concentration.
