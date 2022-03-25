@@ -5,6 +5,7 @@ import re
 import numpy as np
 import pandas as pd
 
+
 fields = {
     'AC': 'activating compound',
     'AP': 'application',
@@ -297,7 +298,7 @@ class Reaction:
 
     def __getDataLines(self, pattern: str):
         try:
-            search_pattern = f'{pattern}\t(.+?)\n(?!\t)'
+            search_pattern = f'\n{pattern}\t(.+?)\n(?!\t)'
             return [p.group(1)
                     for p in re.finditer(
                         search_pattern, self.__reaction_data, flags=re.DOTALL)]
