@@ -8,7 +8,7 @@ with open(path.join(this_directory, 'README.md'), 'r', encoding='utf-8') as f:
 
 setup(
     name='brendapyrser',
-    version='0.0.1',
+    version='0.0.2',
     description='Tools to parse the BRENDA database',
     long_description=long_description,
     long_description_content_type='text/markdown',
