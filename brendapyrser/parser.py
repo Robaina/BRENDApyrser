@@ -1,9 +1,10 @@
-__version__ = '0.0.1'
-__author__ = 'Semidán Robaina Estévez, 2020'
-
+from __future__ import annotations
 import re
 import numpy as np
 import pandas as pd
+
+__version__ = '0.0.1'
+__author__ = 'Semidán Robaina Estévez, 2020'
 
 
 fields = {
@@ -178,11 +179,52 @@ class ReactionList(list):
         except Exception:
             raise ValueError(f'Enzyme {name} not found in database')
 
+    def filter_by_substrate(self, substrate: str) -> list[Reaction]:
+        """
+        Filter reactions by a specific substrate
+        """
+        return [
+            rxn
+            for rxn in self
+            if any(
+                [substrate in mets["substrates"]
+                for mets in rxn.substratesAndProducts]
+            )
+            ]
+
+    def filter_by_product(self, product: str) -> list[Reaction]:
+        """
+        Filter reactions by a specific product
+        """
+        return [
+            rxn
+            for rxn in self
+            if any(
+                [product in mets["products"]
+                for mets in rxn.substratesAndProducts]
+            )
+            ]
+
+    def filter_by_compound(self, compound: str) -> list[Reaction]:
+        """
+        Filter reactions by a substrate or product
+        """
+        return [
+            rxn
+            for rxn in self
+            if any(
+                [(compound in mets["substrates"] 
+                or compound in mets["products"])
+                for mets in rxn.substratesAndProducts]
+            )
+            ]
+
     def filter_by_organism(self, species: str):
         def is_contained(p, S): return any([p in s.lower() for s in S])
         return self.__class__(
                             [rxn for rxn in self if is_contained(species.lower(), rxn.organisms)]
                             )
+        
 
 
 class EnzymeDict(dict):
@@ -513,10 +555,9 @@ class Reaction:
         lines = self.__getDataLines('NSP')
         for line in lines:
             data = self.extractDataLineInfo(line)
-            is_full_rxn = '=' in data['value']
             rxn = data['value'].replace(
                 '{}', '').replace('?', '').replace('more', '').strip()
-            if is_full_rxn:
+            try:
                 subs, prods = rxn.split('=')
                 subs = [s.strip() for s in subs.split('+') if s.strip() != '']
                 prods = [s.strip() for s in prods.split('+') if s.strip() != '']
@@ -526,6 +567,8 @@ class Reaction:
                     substrates.append(subs)
                     products.append(prods)
                     res.append({'substrates': subs, 'products': prods})
+            except Exception:
+                pass
         return res
 
     @property

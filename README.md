@@ -1,14 +1,19 @@
 # A python parser for the BRENDA database
 
-## Installation
-1. ```pip install brendapyrser```
-2. Git clone project to local directory.
-
-   In terminal navigate to directory and enter: ```python setup.py install```
+This project provides python classes and functions to parse the text file containing the entire BRENDA enzyme database (https://www.brenda-enzymes.org)
 
 Due to BRENDA's license, BRENDA's database cannot be downloaded directly by the parser, instead, the user is asked to download the database as a text file after accepting usage conditions [here](https://www.brenda-enzymes.org/download_brenda_without_registration.php).
 
 This is an ongoing project!
+
+## Installation
+1. ```pip install brendapyrser```
+
+or
+
+2. Git clone project to local directory.
+
+   In terminal navigate to directory and enter: ```python setup.py install```
 
 
 ```python
@@ -34,7 +39,7 @@ brenda
 
 <table>
     <tr>
-        <td><strong>Number of Enzymes</strong></td><td>7558</td>
+        <td><strong>Number of Enzymes</strong></td><td>7609</td>
     </tr><tr>
         <td><strong>BRENDA copyright</strong></td><td>Copyrighted by Dietmar Schomburg, Techn. University
 Braunschweig, GERMANY. Distributed under the License as stated
@@ -52,7 +57,7 @@ at http:/www.brenda-enzymes.org</td>
 
 ```python
 # Plot all Km values in the database
-BRENDA_KMs = np.array([v for r in brenda.reactions
+BRENDA_KMs = np.array([v for r in brenda.reactions 
                        for v in r.KMvalues.get_values()])
 values = BRENDA_KMs[(BRENDA_KMs < 1000) & (BRENDA_KMs >= 0)]
 plt.hist(values)
@@ -63,16 +68,18 @@ print(f'Minimum and maximum values in database: {values.min()} mM, {values.max()
 ```
 
 
-![png](https://github.com/Robaina/BRENDA_database/blob/master/README_files/output_4_0.png)
+    
+![png](README_files/output_5_0.png)
+    
 
 
-    Minimum and maximum values in database: 0.0 mM, 999.8 mM
+    Minimum and maximum values in database: 0.0 mM, 997.0 mM
 
 
 
 ```python
 # Plot all Km values in the database
-BRENDA_Kcats = np.array([v for r in brenda.reactions
+BRENDA_Kcats = np.array([v for r in brenda.reactions 
                        for v in r.Kcatvalues.get_values()])
 values = BRENDA_Kcats[(BRENDA_Kcats < 1000) & (BRENDA_Kcats >= 0)]
 plt.hist(values)
@@ -83,7 +90,9 @@ print(f'Minimum and maximum values in database: {values.min()} 1/s, {values.max(
 ```
 
 
-![png](https://github.com/Robaina/BRENDA_database/blob/master/README_files/output_5_0.png)
+    
+![png](README_files/output_6_0.png)
+    
 
 
     Minimum and maximum values in database: 5.83e-10 1/s, 997.0 1/s
@@ -92,7 +101,7 @@ print(f'Minimum and maximum values in database: {values.min()} 1/s, {values.max(
 
 ```python
 # Plot all enzyme optimal temperature values in the database
-BRENDA_TO = np.array([v for r in brenda.reactions
+BRENDA_TO = np.array([v for r in brenda.reactions 
                        for v in r.temperature.filter_by_condition(
                            'optimum').get_values()])
 values = BRENDA_TO[(BRENDA_TO >= 0)]
@@ -104,7 +113,9 @@ print(f'Minimum and maximum values in database: {values.min()} °C, {values.max(
 ```
 
 
-![png](https://github.com/Robaina/BRENDA_database/blob/master/README_files/output_6_0.png)
+    
+![png](README_files/output_7_0.png)
+    
 
 
     Minimum and maximum values in database: 0.0 °C, 125.0 °C
@@ -129,7 +140,9 @@ print(f'Minimum and maximum values in database: {values.min()} °C, {values.max(
 ```
 
 
-![png](https://github.com/Robaina/BRENDA_database/blob/master/README_files/output_8_0.png)
+    
+![png](README_files/output_9_0.png)
+    
 
 
     Minimum and maximum values in database: 20.0 °C, 105.0 °C
@@ -179,7 +192,9 @@ plt.show()
 ```
 
 
-![png](https://github.com/Robaina/BRENDA_database/blob/master/README_files/output_12_0.png)
+    
+![png](README_files/output_13_0.png)
+    
 
 
 
@@ -194,7 +209,9 @@ plt.show()
 ```
 
 
-![png](https://github.com/Robaina/BRENDA_database/blob/master/README_files/output_13_0.png)
+    
+![png](README_files/output_14_0.png)
+    
 
 
 
@@ -222,27 +239,9 @@ plt.show()
 ```
 
 
-![png](https://github.com/Robaina/BRENDA_database/blob/master/README_files/output_15_0.png)
-
-
-
-```python
-r.substratesAndProducts
-```
-
-
-
-
-    [{'substrates': ['AKT1S1', 'ATP'], 'products': ['ADP', 'phospho-AKT1S1']},
-     {'substrates': ['TDP', 'phosphoenolpyruvate'],
-      'products': ['TTP', 'pyruvate | 95% yield |']},
-     {'substrates': ['ATP', 'pyruvate'],
-      'products': ['ADP', 'phosphoenolpyruvate']},
-     {'substrates': ['ADP', 'phosphoenolpyruvate'],
-      'products': ['ATP', 'pyruvate']},
-     {'substrates': ['ATP', 'prothymosin alpha'],
-      'products': ['ADP', 'phospho-prothymosin alpha']}]
-
+    
+![png](README_files/output_16_0.png)
+    
 
 
 ## 3 Finding all KM values for a given substrate and organism
@@ -264,7 +263,67 @@ else:
 ```
 
 
-![png](https://github.com/Robaina/BRENDA_database/blob/master/README_files/output_18_0.png)
+    
+![png](README_files/output_18_0.png)
+    
 
 
 That's interesting! typical NADH concentrations are low in _Escherichia coli_, e.g., from [BioNumbers](http://book.bionumbers.org/what-are-the-concentrations-of-free-metabolites-in-cells/) we get a value of 0.083 mM. The median KM value for NADH among all enzymes binding it is lower as we see in the plot above! Hence, it looks like most enzymes are (nearly) saturated for NADH and thus fluxes are sort of independent of NADH concentration.
+
+# 4 Filtering reactions by specific compound
+
+We can also filter reactions in BRENDA by a specific compound: substrate, product or either of the two. Let's filter reactions containg _geraniol_ as a substrate, product or both to exemplify this feature
+
+
+```python
+substrate_rxns = brenda.reactions.filter_by_substrate("phosphoenolpyruvate")
+substrate_rxns[2]
+```
+
+
+
+
+
+<table>
+    <tr>
+        <td><strong>Enzyme identifier</strong></td><td>2.5.1.19</td>
+    </tr><tr>
+        <td><strong>Name</strong></td><td>3-phosphoshikimate 1-carboxyvinyltransferase</td>
+    </tr><tr>
+        <td><strong>Systematic name</strong></td><td>phosphoenolpyruvate:3-phosphoshikimate 5-O-(1-carboxyvinyl)-transferase</td>
+    </tr><tr>
+        <td><strong>Reaction type</strong></td><td>Enolpyruvate group transfer (#3,52,55# induced-fit mechanism, formation</td>
+    </tr><tr>
+        <td><strong>Reaction</strong></td><td>phosphoenolpyruvate + 3-phosphoshikimate <=> phosphate +5-O-</td>
+    </tr>
+</table>
+
+
+
+
+
+```python
+compound_rxns = brenda.reactions.filter_by_compound("phosphoenolpyruvate")
+compound_rxns[7]
+```
+
+
+
+
+
+<table>
+    <tr>
+        <td><strong>Enzyme identifier</strong></td><td>2.5.1.7</td>
+    </tr><tr>
+        <td><strong>Name</strong></td><td>Udp-n-acetylglucosamine 1-carboxyvinyltransferase</td>
+    </tr><tr>
+        <td><strong>Systematic name</strong></td><td>phosphoenolpyruvate:UDP-N-acetyl-D-glucosamine</td>
+    </tr><tr>
+        <td><strong>Reaction type</strong></td><td>Carboxyvinyl group transfer</td>
+    </tr><tr>
+        <td><strong>Reaction</strong></td><td>phosphoenolpyruvate + UDP-N-acetyl-alpha-D-glucosamine <=> phosphate +UDP-N-acetyl-3-O-</td>
+    </tr>
+</table>
+
+
+
