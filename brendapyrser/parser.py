@@ -187,7 +187,6 @@ class ReactionList(list):
 
 class EnzymeDict(dict):
     def filter_by_organism(self, species: str):
-        # filtered_dict = {species: []}
         filtered_dict = {}
         def is_contained(p, S): return any([p in s for s in S])
         for k in self.keys():
@@ -227,24 +226,24 @@ class Reaction:
                                                        dotall=True).replace('=', '<=>')
                                .replace('\n\t', ''))
         self.__reaction_type = self.__extractRegexPattern('(?<=RT\t)(.*)(?=\n)').capitalize()
-        self.__proteins = self.__getSpeciesDict()
-        self.__references = self.__getReferencesDict()
+        self.__proteins = self.getSpeciesDict()
+        self.__references = self.getReferencesDict()
 
-    def __getSpeciesDict(self) -> dict:
+    def getSpeciesDict(self) -> dict:
         """
         Returns a dict listing all proteins for given EC number
         """
         species = {}
         lines = self.__getDataLines('PR')
         for line in lines:
-            res = self.__extractDataLineInfo(line)
+            res = self.extractDataLineInfo(line)
             species_name, protein_ID = self.__splitSpeciesFromProteinID(res['value'])
             species[res['species'][0]] = {'name': species_name,
                                           'proteinID': protein_ID,
                                           'refs': res['refs']}
         return species
 
-    def __getReferencesDict(self):
+    def getReferencesDict(self):
         """
         Returns a dict listing the bibliography cited for the given EC number
         """
@@ -256,7 +255,7 @@ class Reaction:
             references[refs[0]] = line
         return references
 
-    def __printReactionSummary(self):
+    def printReactionSummary(self):
         data = {'EC number': self.__ec_number,
                 'Name': self.__name,
                 'Systematic name': self.__systematic_name,
@@ -298,7 +297,7 @@ class Reaction:
 
     def __getDataLines(self, pattern: str):
         try:
-            search_pattern = f'\n{pattern}\t(.+?)\n(?!\t)'
+            search_pattern = f'{pattern}\t(.+?)\n(?!\t)'
             return [p.group(1)
                     for p in re.finditer(
                         search_pattern, self.__reaction_data, flags=re.DOTALL)]
@@ -339,7 +338,7 @@ class Reaction:
         except Exception:
             return (line.strip(), '')
 
-    def __extractDataLineInfo(self, line: str, numeric_value=False):
+    def extractDataLineInfo(self, line: str, numeric_value=False):
         """
         Extracts data fields in each data line according to the tags used by BRENDA
         and described in the REAMDE.txt file. What remains after extracting all tags
@@ -395,7 +394,7 @@ class Reaction:
         res = {}
         lines = self.__getDataLines(pattern)
         for line in lines:
-            data = self.__extractDataLineInfo(line)
+            data = self.extractDataLineInfo(line)
             if data['value'] != 'more':
                 res[data['value']] = {'species': self.__getBinomialNames(data['species']),
                                       'meta': data['meta'],
@@ -407,7 +406,7 @@ class Reaction:
         res = {}
         lines = self.__getDataLines(pattern)
         for line in lines:
-            data = self.__extractDataLineInfo(line, numeric_value=True)
+            data = self.extractDataLineInfo(line, numeric_value=True)
             substrate = data['specific_info']
             if substrate != 'more':
                 if substrate not in res.keys():
@@ -432,7 +431,7 @@ class Reaction:
                     return [-999, -999]
 
         for line in lines:
-            data = self.__extractDataLineInfo(line)
+            data = self.extractDataLineInfo(line)
             values.append({'value': eval_value(data['value']),
                            'species': self.__getBinomialNames(data['species']),
                            'meta': data['meta'],
@@ -441,7 +440,7 @@ class Reaction:
 
     @property
     def summary(self):
-        return self.__printReactionSummary()
+        return self.printReactionSummary()
 
     @property
     def ec_number(self):
@@ -502,7 +501,7 @@ class Reaction:
     @property
     def specificActivities(self):
         lines = self.__getDataLines('SA')
-        return [self.__extractDataLineInfo(line, numeric_value=True) for line in lines]
+        return [self.extractDataLineInfo(line, numeric_value=True) for line in lines]
 
     @property
     def substratesAndProducts(self) -> list:
@@ -513,7 +512,7 @@ class Reaction:
         substrates, products, res = [], [], []
         lines = self.__getDataLines('NSP')
         for line in lines:
-            data = self.__extractDataLineInfo(line)
+            data = self.extractDataLineInfo(line)
             is_full_rxn = '=' in data['value']
             rxn = data['value'].replace(
                 '{}', '').replace('?', '').replace('more', '').strip()

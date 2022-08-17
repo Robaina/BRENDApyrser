@@ -1,3 +1,3 @@
 from .parser import (BRENDA, ReactionList,
-                        EnzymeDict, EnzymePropertyDict,
-                        EnzymeConditionDict, Reaction)
+                    EnzymeDict, EnzymePropertyDict,
+                    EnzymeConditionDict, Reaction)
