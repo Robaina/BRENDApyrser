@@ -1,70 +1,22 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+
+"""
+Object to parse and manipulate the BRENDA database
+"""
+
 from __future__ import annotations
+from importlib import metadata
 import re
+
 import numpy as np
 import pandas as pd
 
-__version__ = '0.0.1'
-__author__ = 'Semidán Robaina Estévez, 2020'
+from .constants import fields, units
 
-
-fields = {
-    'AC': 'activating compound',
-    'AP': 'application',
-    'CF': 'cofactor',
-    'CL': 'cloned',
-    'CR': 'crystallization',
-    'EN': 'engineering',
-    'EXP': 'expression',
-    'GI': 'general information on enzyme',
-    'GS': 'general stability',
-    'IC50': 'IC-50 Value',
-    'ID': 'EC-class',
-    'IN': 'inhibitors',
-    'KKM': 'Kcat/KM-Value substrate in {...}',
-    'KI': 'Ki-value, inhibitor in {...}',
-    'KM': 'KM-value, substrate in {...}',
-    'LO': 'localization',
-    'ME': 'metals/ions',
-    'MW': 'molecular weight',
-    'NSP': 'natural substrates/products	reversibilty information in {...}',
-    'OS': 'oxygen stability',
-    'OSS': 'organic solvent stability',
-    'PHO': 'pH-optimum',
-    'PHR': 'pH-range',
-    'PHS': 'pH stability',
-    'PI': 'isoelectric point',
-    'PM': 'posttranslation modification',
-    'PR': 'protein',
-    'PU': 'purification',
-    'RE': 'reaction catalyzed',
-    'RF': 'references',
-    'REN': 'renatured',
-    'RN': 'accepted name (IUPAC)',
-    'RT': 'reaction type',
-    'SA': 'specific activity',
-    'SN': 'synonyms',
-    'SP': 'substrates/products, reversibilty information in {...}',
-    'SS': 'storage stability',
-    'ST': 'source/tissue',
-    'SU': 'subunits',
-    'SY': 'systematic name',
-    'TN': 'turnover number, substrate in {...}',
-    'TO': 'temperature optimum',
-    'TR': 'temperature range',
-    'TS': 'temperature stability'
-}
-
-units = {
-    'KM': 'mM',
-    'KI': 'mM',
-    'TN': '$s^{-1}$',
-    'SA': '$µmol.min^{-1}.mg^{-1}$',
-    'KKM': '$mM^{-1}.s^{-1}$',
-    'TO': '${}^oC$',
-    'TR': '${}^oC$',
-    'TS': '${}^oC$',
-    'MW': 'Da'
-}
+meta = metadata.metadata("brendapyrser")
+__version__ = meta["Version"]
+__author__ = meta["Author"]
 
 
 class BRENDA:
@@ -93,7 +45,7 @@ class BRENDA:
             </tr><tr>
                 <td><strong>BRENDA copyright</strong></td><td>{cr}</td>
             </tr><tr>
-                <td><strong>Parser version</strong></td><td>{parser}</td>
+                <td><strong>Brendapyrser version</strong></td><td>{parser}</td>
             </tr><tr>
                 <td><strong>Author</strong></td><td>{author}</td>
             </tr>
@@ -247,7 +199,6 @@ class EnzymePropertyDict(EnzymeDict):
             return self.__class__({compound: self[compound]})
         except Exception:
             return self.__class__({compound: []})
-            # raise KeyError(f'Invalid compound, valid compounds are: {", ".join(list(self.keys()))}')
 
 
 class EnzymeConditionDict(EnzymeDict):
@@ -264,10 +215,12 @@ class Reaction:
         self.__ec_number = self.__extractRegexPattern('(?<=ID\t)(.*)(?=\n)')
         self.__systematic_name = self.__extractRegexPattern('(?<=SN\t)(.*)(?=\n)')
         self.__name = self.__extractRegexPattern('(?<=RN\t)(.*)(?=\n)').capitalize()
-        self.__mechanism_str = (self.__extractRegexPattern('(?<=RE\t)(.*)(?=\n\nREACTION_)',
-                                                       dotall=True).replace('=', '<=>')
-                               .replace('\n\t', ''))
-        self.__reaction_type = self.__extractRegexPattern('(?<=RT\t)(.*)(?=\n)').capitalize()
+        self.__mechanism_str = (self.__extractRegexPattern('(?<=RE\t)(.*)(?=\n[A-Z])',
+                                dotall=True).replace('=', '<=>')
+                               .replace('\n\t', '').split('\nRE\t'))
+        self.__reaction_type = self.__extractRegexPattern(
+            '(?<=RT\t)(.*)(?=\n)', dotall=True
+            ).split('\nRT\t')
         self.__proteins = self.getSpeciesDict()
         self.__references = self.getReferencesDict()
 
@@ -502,10 +455,11 @@ class Reaction:
 
     @property
     def mechanism(self):
-        return self.__extractReactionMechanismInfo(self.__mechanism_str)[1]
+        return self.__mechanism_str
+        # return self.__extractReactionMechanismInfo(self.__mechanism_str)[1]
 
     @property
-    def reaction_type(self):
+    def reaction_type(self) -> list[str]:
         return self.__reaction_type
 
     @property

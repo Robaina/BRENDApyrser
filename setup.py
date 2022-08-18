@@ -14,11 +14,11 @@ setup(
     long_description_content_type='text/markdown',
     url='https://github.com/robaina/BRENDA_database',
     donwload_url='https://github.com/robaina/BRENDA_database',
-    author='Semidán Robaina Estévez',
+    author='Semidán Robaina Estévez, 2020-2022',
     author_email='srobaina@ull.edu.es',
     maintainer='Semidán Robaina Estévez',
     maintainer_email='srobaina@ull.edu.es',
     license='Creative Commons Attribution 4.0 International',
-    install_requires=['numpy', 'pandas'],
+    install_requires=['numpy', 'pandas', 'importlib-metadata >= 1.0 ; python_version < "3.8"'],
     packages=['brendapyrser']
 )
