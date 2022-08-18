@@ -1,5 +1,5 @@
 ---
-title: 'Gala: A Python package for galactic dynamics'
+title: 'Brendapyrser: a Python package to parse and manipulate the BRENDA database'
 tags:
   - Python
   - bioinformatics
@@ -10,7 +10,7 @@ tags:
 authors:
   - name: Semidán Robaina Estévez
     orcid: 0000-0000-0000-0000
-    equal-contrib: true
+    email: srobaina@ull.edu.es
     affiliation: 1
 affiliations:
  - name: Department of Microbiology. Universidad de La Laguna.
@@ -18,10 +18,10 @@ affiliations:
 date: 18 August 2022
 bibliography: paper.bib
 
-# Optional fields if submitting to a AAS journal too, see this blog post:
-# https://blog.joss.theoj.org/2018/12/a-new-collaboration-with-aas-publishing
-aas-doi: 10.3847/xxxxx <- update this with the DOI from AAS once you know it.
-aas-journal: Astrophysical Journal <- The name of the AAS journal.
+# # Optional fields if submitting to a AAS journal too, see this blog post:
+# # https://blog.joss.theoj.org/2018/12/a-new-collaboration-with-aas-publishing
+# aas-doi: 10.3847/xxxxx <- update this with the DOI from AAS once you know it.
+# aas-journal: Astrophysical Journal <- The name of the AAS journal.
 ---
 
 # Summary
