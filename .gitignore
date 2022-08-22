@@ -43,3 +43,5 @@ nosetests.xml
 .pydevproject
 
 *NOTES.txt
+
+ms/*
