@@ -78,7 +78,7 @@ print(f'Minimum and maximum values in database: {values.min()} mM, {values.max()
 
 
 ```python
-# Plot all Km values in the database
+# Plot all Kcat values in the database
 BRENDA_Kcats = np.array([v for r in brenda.reactions 
                        for v in r.Kcatvalues.get_values()])
 values = BRENDA_Kcats[(BRENDA_Kcats < 1000) & (BRENDA_Kcats >= 0)]
