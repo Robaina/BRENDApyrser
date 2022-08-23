@@ -18,7 +18,7 @@ setup(
     author_email='srobaina@ull.edu.es',
     maintainer='Semidán Robaina Estévez',
     maintainer_email='srobaina@ull.edu.es',
-    license='Creative Commons Attribution 4.0 International',
+    license='BSD-3-Clause license',
     install_requires=['numpy', 'pandas', 'importlib-metadata >= 1.0 ; python_version < "3.8"'],
     packages=['brendapyrser']
 )
