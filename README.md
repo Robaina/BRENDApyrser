@@ -1,5 +1,7 @@
 # A python parser for the BRENDA database
 
+[![DOI](https://zenodo.org/badge/299416438.svg)](https://zenodo.org/badge/latestdoi/299416438)
+
 This project provides python classes and functions to parse the text file containing the entire BRENDA enzyme database (https://www.brenda-enzymes.org)
 
 Due to BRENDA's license, BRENDA's database cannot be downloaded directly by the parser, instead, the user is asked to download the database as a text file after accepting usage conditions [here](https://www.brenda-enzymes.org/download_brenda_without_registration.php).
