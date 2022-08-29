@@ -274,7 +274,7 @@ That's interesting! typical NADH concentrations are low in _Escherichia coli_, e
 
 # 4 Filtering reactions by specific compound
 
-We can also filter reactions in BRENDA by a specific compound: substrate, product or either of the two. Let's filter reactions containg _geraniol_ as a substrate, product or both to exemplify this feature
+We can also filter reactions in BRENDA by a specific compound: substrate, product or either of the two. Let's filter reactions containing _phosphoenolpyruvate_ as a substrate, product or both to exemplify this feature
 
 
 ```python
