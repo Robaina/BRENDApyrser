@@ -1,4 +1,6 @@
-# A python parser for the BRENDA database
+![logo](assets/logo.png)
+## a Python package to parse and manipulate the BRENDA database
+<br>
 
 [![DOI](https://zenodo.org/badge/299416438.svg)](https://zenodo.org/badge/latestdoi/299416438)
 
