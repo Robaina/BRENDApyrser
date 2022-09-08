@@ -19,6 +19,12 @@ or
 
    In terminal navigate to directory and enter: ```python setup.py install```
 
+## Citation
+
+If you use this software, please cite it as below:
+
+Robaina-Estévez, S. (2022). BRENDApyrser: a Python package to parse and manipulate the BRENDA database (Version 0.0.3)<br>[Computer software]. https://doi.org/10.5281/zenodo.7026555
+
 
 ```python
 import numpy as np
