@@ -24,7 +24,7 @@ lib
 lib64
 __pycache__
 
-*.ipynb
+# *.ipynb
 
 # Installer logs
 pip-log.txt
