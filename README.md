@@ -4,7 +4,7 @@
 ![PyPI](https://img.shields.io/pypi/v/brendapyrser)
 ![GitHub release (latest by date)](https://img.shields.io/github/v/release/Robaina/Brendapyrser)
 [![GitHub license](https://img.shields.io/github/license/Robaina/BRENDApyrser)](https://github.com/Robaina/BRENDApyrser/blob/master/LICENSE)
-![Contributor Covenant](https://img.shields.io/badge/Contributor%20Coventant-v2.0%20adopted-ff69b4)
+![Contributor Covenant](https://img.shields.io/badge/Contributor%20Covenant-v2.0%20adopted-ff69b4)
 [![DOI](https://zenodo.org/badge/299416438.svg)](https://zenodo.org/badge/latestdoi/299416438)
 
 ## What is Brendapyrser?
