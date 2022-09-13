@@ -27,6 +27,10 @@ Due to BRENDA's license, BRENDA's database cannot be downloaded directly by the 
 
 You can find a jupyter notebook with usage examples [here](examples/examples.ipynb).
 
+## Contribute
+
+Contributions are always more than welcome! Feel free to fork, make changes and pull requests. If you don't know where to start, you can always browse open issues. Thanks!
+
 ## Citation
 
 If you use this software, please cite it as below:
