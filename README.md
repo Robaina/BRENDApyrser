@@ -4,6 +4,7 @@
 
 ![PyPI](https://img.shields.io/pypi/v/brendapyrser)
 [![GitHub license](https://img.shields.io/github/license/Robaina/BRENDApyrser)](https://github.com/Robaina/BRENDApyrser/blob/master/LICENSE)
+![Contributor Covenant](https://img.shields.io/badge/Contributor%20Coventant-v2.0%20adopted-ff69b4)
 [![DOI](https://zenodo.org/badge/299416438.svg)](https://zenodo.org/badge/latestdoi/299416438)
 
 This project provides python classes and functions to parse the text file containing the entire BRENDA enzyme database (https://www.brenda-enzymes.org)
