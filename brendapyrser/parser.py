@@ -25,7 +25,7 @@ class BRENDA:
     """
     def __init__(self, path_to_database):
 
-        with open(path_to_database, encoding="iso-8859-1") as file:
+        with open(path_to_database, encoding="utf-8") as file:
             self.__data = file.read()
         self.__ec_numbers = [ec.group(1)
                              for ec in re.finditer('(?<=ID\\t)(.*)(?=\\n)', self.__data)]
