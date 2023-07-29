@@ -247,7 +247,7 @@ class Reaction:
         for line in lines:
             line = self.__removeTabs(line)
             line, refs = self.__extractDataField(line, ('<', '>'))
-            references[refs[0]] = line
+            references[refs] = line
         return references
 
     def printReactionSummary(self):
