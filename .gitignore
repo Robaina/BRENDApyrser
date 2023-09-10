@@ -41,6 +41,7 @@ nosetests.xml
 .mr.developer.cfg
 .project
 .pydevproject
+dev.ipynb
 
 *NOTES.txt
 
