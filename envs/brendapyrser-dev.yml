@@ -15,5 +15,6 @@ dependencies:
     - mkdocstrings[python]
     - ruff
     - black
+    - black[jupyter]
     - argmark
     - coverage
