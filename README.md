@@ -25,7 +25,7 @@ or
 
 Due to BRENDA's license, BRENDA's database cannot be downloaded directly by the parser, instead, the user is asked to download the database as a text file after accepting usage conditions [here](https://www.brenda-enzymes.org/download.php).
 
-You can find a jupyter notebook with usage examples [here](examples/examples.ipynb).
+You can find a jupyter notebook with usage examples [here](docs/examples.ipynb).
 
 ## Contribute
 
