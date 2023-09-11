@@ -6,8 +6,8 @@ Unit tests for brendapyrser.
 """
 
 import unittest
-from brendapyrser import Reaction, ReactionList
 
+from brendapyrser import Reaction
 
 rxn_data = """ID	1.1.1.304
 ********************************************************************************
@@ -405,55 +405,61 @@ GI	#5# evolution (#5# the enzyme belongs to the family of the short-chain
 	dehydrogenase/reductases <7>) <7>"""
 
 
-
 class TestReaction(unittest.TestCase):
     def test_ec_number(self):
         rxn = Reaction(rxn_data)
         self.assertEqual(
-            rxn.ec_number, "1.1.1.304",
-            "Failed to correctly retrieve EC number"
-            )
+            rxn.ec_number, "1.1.1.304", "Failed to correctly retrieve EC number"
+        )
+
     def test_name(self):
         rxn = Reaction(rxn_data)
         self.assertEqual(
-            rxn.name, "Diacetyl reductase [(s)-acetoin forming]",
-            "Failed to correctly retrieve reaction name"
-            )
+            rxn.name,
+            "Diacetyl reductase [(s)-acetoin forming]",
+            "Failed to correctly retrieve reaction name",
+        )
+
     def test_sysname(self):
         rxn = Reaction(rxn_data)
         self.assertEqual(
-            rxn.systematic_name, "(S)-acetoin:NAD+ oxidoreductase",
-            "Failed to correctly retrieve systematic reaction name"
-            )
+            rxn.systematic_name,
+            "(S)-acetoin:NAD+ oxidoreductase",
+            "Failed to correctly retrieve systematic reaction name",
+        )
+
     def test_KMvalues(self):
         rxn = Reaction(rxn_data)
         self.assertEqual(
-            rxn.KMvalues.get_values()[:4], [0.045, 0.095, 0.025, 0.11],
-            "Failed to correctly retrieve KM values"
-            )
+            rxn.KMvalues.get_values()[:4],
+            [0.045, 0.095, 0.025, 0.11],
+            "Failed to correctly retrieve KM values",
+        )
+
     def test_KKMvalues(self):
         rxn = Reaction(rxn_data)
         self.assertEqual(
-            rxn.KKMvalues.get_values()[:4], [16.9, 36.4, 81.5, 432.0],
-            "Failed to correctly retrieve KKM values"
-            )
+            rxn.KKMvalues.get_values()[:4],
+            [16.9, 36.4, 81.5, 432.0],
+            "Failed to correctly retrieve KKM values",
+        )
+
     def test_Kcatvalues(self):
         rxn = Reaction(rxn_data)
         self.assertEqual(
-            rxn.Kcatvalues.get_values()[:4], [748.0, 202.0, 591.0, 1222.0],
-            "Failed to correctly retrieve Kcat values"
-            )
+            rxn.Kcatvalues.get_values()[:4],
+            [748.0, 202.0, 591.0, 1222.0],
+            "Failed to correctly retrieve Kcat values",
+        )
+
     def test_temperature(self):
         rxn = Reaction(rxn_data)
         self.assertEqual(
-            rxn.temperature["optimum"][0]["value"], 50.0,
-            "Failed to correctly retrieve temperature values"
-            )
+            rxn.temperature["optimum"][0]["value"],
+            50.0,
+            "Failed to correctly retrieve temperature values",
+        )
 
- 
 
-
-if __name__ == '__main__':
+if __name__ == "__main__":
     unittest.main()
-
-
