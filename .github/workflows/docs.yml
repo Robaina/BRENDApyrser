@@ -1,0 +1,21 @@
+name: docs
+on:
+  push:
+    branches: [ main ]
+    paths:
+      - 'docs/**'
+      - 'mkdocs.yml'
+
+jobs:
+
+  build-docs:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-python@v2
+      - run: pip install --upgrade pip && pip install mkdocs mkdocs-gen-files pymdown-extensions mkdocs-jupyter mkdocstrings[python]
+      - run: git config user.name 'github-actions[bot]' && git config user.email 'github-actions[bot]@users.noreply.github.com'
+      - name: Publish docs
+        run: mkdocs gh-deploy

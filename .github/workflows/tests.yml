@@ -1,0 +1,57 @@
+name: tests
+on:
+  push:
+    branches: [ main ]
+    paths-ignore:
+      - '**.md'
+      - '**.ipynb'
+      - '**.bib'
+      - 'ms/*'
+  pull_request:
+    types: [opened, reopened, edited]
+    paths-ignore:
+      - '**.md'
+      - '**.ipynb'
+      - '**.bib'
+      - 'ms/*'
+
+jobs:
+
+  create-env:
+    name: ${{ matrix.os }} 
+    runs-on: ${{ matrix.os }}
+    defaults:
+      run:
+        shell: bash -l {0}
+
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, macos-latest]
+
+    steps:
+      - name: checkout repository
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+
+      - name: create environment
+        uses: conda-incubator/setup-miniconda@v2
+        with:
+          python-version: 3.8
+          # mamba-version: "*"
+          channels: conda-forge,bioconda,defaults
+          auto-activate-base: false
+          activate-environment: tests_pynteny
+          environment-file: envs/pynteny-dev.yml
+
+      - name: Build & Install Pynteny
+        run: poetry build && pip install dist/pynteny*.whl
+
+      - name: Run tests and collect coverage
+        run: pynteny --help && coverage run --omit pynteny/wrappers.py,pynteny/cli.py,pynteny/subcommands.py,pynteny/utils.py -m unittest discover tests && coverage xml
+
+      - name: Upload coverage to Codecov
+        uses: codecov/codecov-action@v3
+        with:
+          version: "v0.1.15"
