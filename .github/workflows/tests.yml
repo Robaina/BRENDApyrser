@@ -1,7 +1,6 @@
 name: tests
 on:
   push:
-    branches: [ main ]
     paths-ignore:
       - '**.md'
       - '**.ipynb'
