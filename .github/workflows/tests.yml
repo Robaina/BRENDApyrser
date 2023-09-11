@@ -42,14 +42,14 @@ jobs:
           # mamba-version: "*"
           channels: conda-forge,bioconda,defaults
           auto-activate-base: false
-          activate-environment: tests_pynteny
-          environment-file: envs/pynteny-dev.yml
+          activate-environment: tests_brendapyrser
+          environment-file: envs/brendapyrser-dev.yml
 
-      - name: Build & Install Pynteny
-        run: poetry build && pip install dist/pynteny*.whl
+      - name: Build & Install BRENDApyrser
+        run: poetry build && pip install dist/brendapyrser*.whl
 
       - name: Run tests and collect coverage
-        run: pynteny --help && coverage run --omit pynteny/wrappers.py,pynteny/cli.py,pynteny/subcommands.py,pynteny/utils.py -m unittest discover tests && coverage xml
+        run: coverage run -m unittest discover tests && coverage xml
 
       - name: Upload coverage to Codecov
         uses: codecov/codecov-action@v3
