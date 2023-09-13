@@ -1,0 +1,20 @@
+name: brendapyrser-dev
+channels:
+  - defaults
+  - bioconda
+  - conda-forge
+dependencies:
+  - python >= 3.8
+  - poetry >= 1.3
+  - pip
+  - pip:
+    - mkdocs
+    - mkdocs-gen-files
+    - pymdown-extensions
+    - mkdocs-jupyter
+    - mkdocstrings[python]
+    - ruff
+    - black
+    - black[jupyter]
+    - argmark
+    - coverage
