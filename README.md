@@ -2,6 +2,7 @@
 ## a Python package to parse and manipulate the BRENDA database
 
 [![tests](https://github.com/Robaina/BRENDApyrser/actions/workflows/tests.yml/badge.svg)](https://github.com/Robaina/BRENDApyrser/actions/workflows/tests.yml)
+[![codecov](https://codecov.io/gh/Robaina/BRENDApyrser/graph/badge.svg?token=214SPFXRTG)](https://codecov.io/gh/Robaina/BRENDApyrser)
 ![PyPI](https://img.shields.io/pypi/v/brendapyrser)
 ![GitHub release (latest by date)](https://img.shields.io/github/v/release/Robaina/Brendapyrser)
 [![GitHub license](https://img.shields.io/github/license/Robaina/BRENDApyrser)](https://github.com/Robaina/BRENDApyrser/blob/master/LICENSE)
