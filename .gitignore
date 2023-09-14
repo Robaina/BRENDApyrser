@@ -2,6 +2,7 @@
 /code_oven
 /data
 /.ipynb_checkpoints
+.idea
 
 *.py[cod]
 
