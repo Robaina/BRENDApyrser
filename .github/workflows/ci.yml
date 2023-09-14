@@ -1,0 +1,20 @@
+name: CI
+on: push
+jobs:
+  quality:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Install Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: "3.8"
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install ruff black
+      # Include `--format=github` to enable automatic inline annotations.
+      # - name: Check linters
+      #   run: ruff --format=github .  # ruff does not allow trailing white space in logo (cli.py)
+      - name: Check format
+        run: black --check .
