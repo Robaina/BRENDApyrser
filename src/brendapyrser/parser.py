@@ -24,6 +24,7 @@ class BRENDA:
     """
     Provides methods to parse the BRENDA database (https://www.brenda-enzymes.org/)
     """
+
     def __init__(self, path_to_database):
         with open(path_to_database, encoding="utf-8") as file:
             self.__data = file.read()
@@ -261,7 +262,7 @@ class Reaction:
         lines = self.__getDataLines("RF")
         for line in lines:
             line = self.__removeTabs(line)
-            line, refs = self.__extractDataField(line, ('<', '>'))
+            line, refs = self.__extractDataField(line, ("<", ">"))
             references[refs] = line
         return references
 
@@ -328,8 +329,8 @@ class Reaction:
     @staticmethod
     def __extractDataField(line, regex_tags: tuple):
         try:
-            l, r = regex_tags
-            searched_s = re.search(f"{l}(.+?){r}", line)
+            left, right = regex_tags
+            searched_s = re.search(f"{left}(.+?){right}", line)
             span = searched_s.span()
             matched_s = line[span[0] + 1 : span[1] - 1].strip()
             line = line.replace(f"{searched_s.group()}", "")
