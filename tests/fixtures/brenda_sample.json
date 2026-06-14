@@ -1,0 +1,2749 @@
+{
+ "release": "2026.1",
+ "version": "1",
+ "data": {
+  "1.1.1.304": {
+   "id": "1.1.1.304",
+   "protein": {
+    "1": {
+     "id": "1",
+     "organism": "Staphylococcus aureus",
+     "references": [
+      "4"
+     ],
+     "comment": ""
+    },
+    "2": {
+     "id": "2",
+     "organism": "Geobacillus stearothermophilus",
+     "references": [
+      "5",
+      "8"
+     ],
+     "comment": ""
+    },
+    "3": {
+     "id": "3",
+     "organism": "Klebsiella aerogenes",
+     "references": [
+      "1"
+     ],
+     "comment": ""
+    },
+    "4": {
+     "id": "4",
+     "organism": "Bacillus licheniformis",
+     "references": [
+      "10"
+     ],
+     "comment": ""
+    },
+    "5": {
+     "id": "5",
+     "organism": "Rhodococcus erythropolis",
+     "references": [
+      "7"
+     ],
+     "comment": ""
+    },
+    "6": {
+     "id": "6",
+     "organism": "Columba livia",
+     "references": [
+      "2",
+      "3"
+     ],
+     "comment": ""
+    },
+    "7": {
+     "id": "7",
+     "organism": "Klebsiella pneumoniae",
+     "source": "uniprot",
+     "accessions": [
+      "Q48436"
+     ],
+     "references": [
+      "6",
+      "12"
+     ],
+     "comment": ""
+    },
+    "8": {
+     "id": "8",
+     "organism": "Rhodococcus erythropolis",
+     "source": "uniprot",
+     "accessions": [
+      "M4N626"
+     ],
+     "references": [
+      "13"
+     ],
+     "comment": ""
+    },
+    "9": {
+     "id": "9",
+     "organism": "Rhodococcus erythropolis",
+     "source": "uniprot",
+     "accessions": [
+      "C0ZPN9"
+     ],
+     "references": [
+      "7"
+     ],
+     "comment": ""
+    },
+    "10": {
+     "id": "10",
+     "organism": "Paenibacillus polymyxa",
+     "source": "genbank",
+     "references": [
+      "9"
+     ],
+     "comment": ""
+    },
+    "11": {
+     "id": "11",
+     "organism": "Mycobacterium sp.",
+     "source": "uniprot",
+     "accessions": [
+      "W8VSK8"
+     ],
+     "references": [
+      "11"
+     ],
+     "comment": ""
+    },
+    "12": {
+     "id": "12",
+     "organism": "Klebsiella pneumoniae",
+     "source": "uniprot",
+     "accessions": [
+      "D7RP28"
+     ],
+     "references": [
+      "13"
+     ],
+     "comment": ""
+    },
+    "13": {
+     "id": "13",
+     "organism": "Paenibacillus polymyxa",
+     "source": "uniprot",
+     "accessions": [
+      "A0A5B8J1I7"
+     ],
+     "references": [
+      "13"
+     ],
+     "comment": ""
+    },
+    "14": {
+     "id": "14",
+     "organism": "Mycobacterium sp. B-009",
+     "source": "uniprot",
+     "accessions": [
+      "W8VSK8"
+     ],
+     "references": [
+      "13"
+     ],
+     "comment": ""
+    }
+   },
+   "recommended_name": "diacetyl reductase [(S)-acetoin forming]",
+   "systematic_name": "(S)-acetoin:NAD+ oxidoreductase",
+   "synonyms": [
+    {
+     "value": "EC 1.1.1.5"
+    },
+    {
+     "proteins": [
+      "14"
+     ],
+     "references": [
+      "13"
+     ],
+     "comment": "gene name",
+     "value": "ADS1"
+    },
+    {
+     "value": "ADS1",
+     "proteins": [
+      "11"
+     ],
+     "references": [
+      "11"
+     ],
+     "comment": ""
+    },
+    {
+     "value": "ardII",
+     "proteins": [
+      "12"
+     ],
+     "references": [
+      "13"
+     ],
+     "comment": ""
+    },
+    {
+     "proteins": [
+      "13"
+     ],
+     "references": [
+      "13"
+     ],
+     "comment": "gene name",
+     "value": "Ppdar"
+    },
+    {
+     "proteins": [
+      "13"
+     ],
+     "references": [
+      "13"
+     ],
+     "comment": "gene name, UniProt",
+     "value": "FQU75_06005"
+    },
+    {
+     "value": "ADH",
+     "proteins": [
+      "14"
+     ],
+     "references": [
+      "13"
+     ],
+     "comment": ""
+    },
+    {
+     "value": "S-stereospecific diacetyl reductase",
+     "proteins": [
+      "2"
+     ],
+     "references": [
+      "8"
+     ],
+     "comment": ""
+    },
+    {
+     "value": "BSDR",
+     "proteins": [
+      "2"
+     ],
+     "references": [
+      "8"
+     ],
+     "comment": ""
+    },
+    {
+     "proteins": [
+      "7"
+     ],
+     "references": [
+      "12"
+     ],
+     "comment": "gene name",
+     "value": "budC"
+    },
+    {
+     "proteins": [
+      "12"
+     ],
+     "references": [
+      "13"
+     ],
+     "comment": "gene name, UniProt",
+     "value": "budC"
+    },
+    {
+     "value": "budC",
+     "proteins": [
+      "4"
+     ],
+     "references": [
+      "10"
+     ],
+     "comment": ""
+    },
+    {
+     "value": "ReADR",
+     "proteins": [
+      "5"
+     ],
+     "references": [
+      "7"
+     ],
+     "comment": ""
+    },
+    {
+     "value": "AdR",
+     "proteins": [
+      "5",
+      "8",
+      "9"
+     ],
+     "references": [
+      "7",
+      "13"
+     ],
+     "comment": ""
+    },
+    {
+     "value": "acetoin(diacetyl) reductase",
+     "proteins": [
+      "5",
+      "9"
+     ],
+     "references": [
+      "7"
+     ],
+     "comment": ""
+    },
+    {
+     "value": "Kp-BudC",
+     "proteins": [
+      "7"
+     ],
+     "references": [
+      "12"
+     ],
+     "comment": ""
+    },
+    {
+     "value": "NADH-dependent Kp-BudC",
+     "proteins": [
+      "7"
+     ],
+     "references": [
+      "12"
+     ],
+     "comment": ""
+    },
+    {
+     "proteins": [
+      "12"
+     ],
+     "references": [
+      "13"
+     ],
+     "comment": "gene name",
+     "value": "Kpdar"
+    },
+    {
+     "value": "Kpdar",
+     "proteins": [
+      "7"
+     ],
+     "references": [
+      "12"
+     ],
+     "comment": ""
+    },
+    {
+     "value": "diacetyl reductase",
+     "proteins": [
+      "7",
+      "8",
+      "10",
+      "12",
+      "13",
+      "14"
+     ],
+     "references": [
+      "9",
+      "12",
+      "13"
+     ],
+     "comment": ""
+    },
+    {
+     "value": "DAR",
+     "proteins": [
+      "7",
+      "8",
+      "10",
+      "12",
+      "13",
+      "14"
+     ],
+     "references": [
+      "9",
+      "12",
+      "13"
+     ],
+     "comment": ""
+    }
+   ],
+   "reaction": [
+    {
+     "proteins": [
+      "6"
+     ],
+     "references": [
+      "3"
+     ],
+     "comment": "Theorell-Chance mechanism with NADH as the leading substrate",
+     "value": "(S)-acetoin + NAD+ = diacetyl + NADH + H+"
+    }
+   ],
+   "source_tissue": [
+    {
+     "value": "liver",
+     "proteins": [
+      "6"
+     ],
+     "references": [
+      "2",
+      "3"
+     ],
+     "comment": ""
+    }
+   ],
+   "natural_substrates_products": [
+    {
+     "proteins": [
+      "5"
+     ],
+     "references": [
+      "7"
+     ],
+     "comment": "Rhodococcus erythropolis WZ010 is capable of producing optically pure (2S,3S)-2,3-butanediol in alcoholic fermentation.",
+     "value": "more = ?"
+    },
+    {
+     "proteins": [
+      "10"
+     ],
+     "references": [
+      "9"
+     ],
+     "comment": "the enzyme also catalyzes the stereospcific reaction of (S)-acetoin reduction to butanediol, EC 1.1.1.76",
+     "value": "more = ?"
+    },
+    {
+     "proteins": [
+      "2"
+     ],
+     "references": [
+      "8"
+     ],
+     "comment": "the enzyme shows an S-enantioselectivity in the reversible reduction of acetoin so it might be responsible of the meso-butenediol formation from R-acetoin. It acts on racemic acetoin and (S)-acetoin to form (2S,3S)-butane-2,3-diol, EC 1.1.1.76, but also on the (2R,3R)-butane-2,3-diol isomer in the reverse reaction, EC 1.1.1.4",
+     "value": "more = ?"
+    },
+    {
+     "value": "diacetyl + NADH + H+ = (S)-acetoin + NAD+",
+     "proteins": [
+      "2",
+      "5",
+      "7",
+      "8",
+      "12",
+      "13",
+      "14"
+     ],
+     "references": [
+      "7",
+      "8",
+      "12",
+      "13"
+     ],
+     "comment": ""
+    },
+    {
+     "value": "diacetyl + NADH + H+ = (S)-acetoin + NAD+ {ir}",
+     "proteins": [
+      "2",
+      "5",
+      "7",
+      "8",
+      "12",
+      "13",
+      "14"
+     ],
+     "references": [
+      "7",
+      "8",
+      "12",
+      "13"
+     ],
+     "comment": ""
+    },
+    {
+     "value": "diacetyl + NADH + H+ = (S)-acetoin + NAD+ {r}",
+     "proteins": [
+      "2",
+      "5",
+      "7",
+      "8",
+      "12",
+      "13",
+      "14"
+     ],
+     "references": [
+      "7",
+      "8",
+      "12",
+      "13"
+     ],
+     "comment": ""
+    },
+    {
+     "value": "diacetyl + NADH + H+ = (R)-acetoin + NAD+ {r}",
+     "proteins": [
+      "9"
+     ],
+     "references": [
+      "7"
+     ],
+     "comment": ""
+    }
+   ],
+   "substrates_products": [
+    {
+     "value": "2,3-pentanedione + beta-NADH + H+ = L-3-hydroxy-2-pentanone + beta-NAD+ {ir}",
+     "proteins": [
+      "1"
+     ],
+     "references": [
+      "4"
+     ],
+     "comment": ""
+    },
+    {
+     "proteins": [
+      "1"
+     ],
+     "references": [
+      "4"
+     ],
+     "comment": "86.9% of the activity with pentane-2,3-dione",
+     "value": "diacetyl + beta-NADH + H+ = (S)-acetoin + beta-NAD+  {ir}"
+    },
+    {
+     "proteins": [
+      "1"
+     ],
+     "references": [
+      "4"
+     ],
+     "comment": "38.4% of the activity with pentane-2,3-dione",
+     "value": "ethyl pyruvate + beta-NADH + H+ = ? + beta-NAD+  {ir}"
+    },
+    {
+     "proteins": [
+      "1"
+     ],
+     "references": [
+      "4"
+     ],
+     "comment": "22.8% of the activity with pentane-2,3-dione",
+     "value": "methyl pyruvate + beta-NADH + H+ = ? + beta-NAD+  {ir}"
+    },
+    {
+     "proteins": [
+      "1"
+     ],
+     "references": [
+      "4"
+     ],
+     "comment": "no activity with alpha-NADH or NADPH",
+     "value": "more = ?"
+    },
+    {
+     "proteins": [
+      "5"
+     ],
+     "references": [
+      "7"
+     ],
+     "comment": "Rhodococcus erythropolis WZ010 is capable of producing optically pure (2S,3S)-2,3-butanediol in alcoholic fermentation.",
+     "value": "more = ?"
+    },
+    {
+     "proteins": [
+      "10"
+     ],
+     "references": [
+      "9"
+     ],
+     "comment": "the enzyme also catalyzes the stereospcific reaction of (S)-acetoin reduction to butanediol, EC 1.1.1.76",
+     "value": "more = ?"
+    },
+    {
+     "proteins": [
+      "2"
+     ],
+     "references": [
+      "8"
+     ],
+     "comment": "the enzyme shows an S-enantioselectivity in the reversible reduction of acetoin so it might be responsible of the meso-butenediol formation from R-acetoin. It acts on racemic acetoin and (S)-acetoin to form (2S,3S)-butane-2,3-diol, EC 1.1.1.76, but also on the (2R,3R)-butane-2,3-diol isomer in the reverse reaction, EC 1.1.1.4",
+     "value": "more = ?"
+    },
+    {
+     "proteins": [
+      "5"
+     ],
+     "references": [
+      "7"
+     ],
+     "comment": "the enzyme displays absolute stereospecificity in the reduction of diacetyl to (2S,3S)-2,3-butanediol via (S)-acetoin. The enzyme shows higher catalytic efficiency for (S)-1-phenylethanol oxidation than that for acetophenone reduction. ReADR-catalyzed asymmetric reduction of diacetyl is coupled with stereoselective oxidation of 1-phenylethanol, which simultaneously forms both (2S,3S)-2,3-butanediol and (R)-1-phenylethanol in great conversions and enantiomeric excess values.The enzyme accepts a broad range of substrates including aliphatic and aryl alcohols, aldehydes, and ketones",
+     "value": "more = ?"
+    },
+    {
+     "proteins": [
+      "11"
+     ],
+     "references": [
+      "11"
+     ],
+     "comment": "enzyme shows activity as a reductase specific for (S)-acetoin, EC 1.1.1.76, and both diacetyl reductase (EC 1.1.1.304) and NAD+-dependent alcohol dehydrogenase (EC 1.1.1.1) activities",
+     "value": "more = ?"
+    },
+    {
+     "proteins": [
+      "4"
+     ],
+     "references": [
+      "10"
+     ],
+     "comment": "enzyme shows oxidative activity to racemic 2,3-butanediol but no activity toward racemic acetoin in the presence of NAD+",
+     "value": "more = ?"
+    },
+    {
+     "proteins": [
+      "12"
+     ],
+     "references": [
+      "13"
+     ],
+     "comment": "KpDAR has clear activities towards diacetyl, (R)/(S)-acetoin (cf. EC 1.1.1.303) and meso-2,3-butanediol with NADH/NAD+ as the cofactor. Diacetyl is the best substrate in the ketone reduction reactions. meso-2,3-Butanediol is the best substrate in the alcohol oxidation reactions, while very low activity is observed with (R)/(S)-acetoin, (2S,3S)-2,3-butanediol (EC 1.1.1.76) and (2R,3R)-2,3-butanediol (EC 1.1.1.4). Optimization of the reaction conditions, overview. Chiral-column GC analyses of products produced by whole-cells of recombinant Escherichia coli",
+     "value": "more = ?"
+    },
+    {
+     "proteins": [
+      "7"
+     ],
+     "references": [
+      "12"
+     ],
+     "comment": "the enzyme BudC also catalyzes the reduction of acetoin by NADH, cf. EC 1.1.1.76",
+     "value": "more = ?"
+    },
+    {
+     "proteins": [
+      "7"
+     ],
+     "references": [
+      "12"
+     ],
+     "comment": "stereospecific reaction",
+     "value": "diacetyl + NADH + H+ = (S)-acetoin + NAD+"
+    },
+    {
+     "proteins": [
+      "7"
+     ],
+     "references": [
+      "6"
+     ],
+     "comment": "87% of the (R)-2,3-butanediol dehydrogenase activity with substrate acetoin",
+     "value": "diacetyl + NADH + H+ = (S)-acetoin + NAD+"
+    },
+    {
+     "value": "diacetyl + NADH + H+ = (S)-acetoin + NAD+",
+     "proteins": [
+      "2",
+      "3",
+      "5",
+      "6",
+      "8",
+      "11",
+      "12",
+      "13",
+      "14"
+     ],
+     "references": [
+      "1",
+      "2",
+      "3",
+      "5",
+      "7",
+      "8",
+      "11",
+      "13"
+     ],
+     "comment": ""
+    },
+    {
+     "proteins": [
+      "7"
+     ],
+     "references": [
+      "12"
+     ],
+     "comment": "stereospecific reaction",
+     "value": "diacetyl + NADH + H+ = (S)-acetoin + NAD+  {ir}"
+    },
+    {
+     "proteins": [
+      "7"
+     ],
+     "references": [
+      "6"
+     ],
+     "comment": "87% of the (R)-2,3-butanediol dehydrogenase activity with substrate acetoin",
+     "value": "diacetyl + NADH + H+ = (S)-acetoin + NAD+  {ir}"
+    },
+    {
+     "value": "diacetyl + NADH + H+ = (S)-acetoin + NAD+  {ir}",
+     "proteins": [
+      "2",
+      "3",
+      "5",
+      "6",
+      "8",
+      "11",
+      "12",
+      "13",
+      "14"
+     ],
+     "references": [
+      "1",
+      "2",
+      "3",
+      "5",
+      "7",
+      "8",
+      "11",
+      "13"
+     ],
+     "comment": ""
+    },
+    {
+     "proteins": [
+      "7"
+     ],
+     "references": [
+      "12"
+     ],
+     "comment": "stereospecific reaction",
+     "value": "diacetyl + NADH + H+ = (S)-acetoin + NAD+  {r}"
+    },
+    {
+     "proteins": [
+      "7"
+     ],
+     "references": [
+      "6"
+     ],
+     "comment": "87% of the (R)-2,3-butanediol dehydrogenase activity with substrate acetoin",
+     "value": "diacetyl + NADH + H+ = (S)-acetoin + NAD+  {r}"
+    },
+    {
+     "value": "diacetyl + NADH + H+ = (S)-acetoin + NAD+  {r}",
+     "proteins": [
+      "2",
+      "3",
+      "5",
+      "6",
+      "8",
+      "11",
+      "12",
+      "13",
+      "14"
+     ],
+     "references": [
+      "1",
+      "2",
+      "3",
+      "5",
+      "7",
+      "8",
+      "11",
+      "13"
+     ],
+     "comment": ""
+    },
+    {
+     "proteins": [
+      "3"
+     ],
+     "references": [
+      "1"
+     ],
+     "comment": "57.7% of the activity with diacetyl",
+     "value": "ethyl pyruvate + NADH + H+ = ? + NAD+"
+    },
+    {
+     "proteins": [
+      "3"
+     ],
+     "references": [
+      "1"
+     ],
+     "comment": "11% of the activity with diacetyl",
+     "value": "methyl glyoxal + NADH + H+ = ? + NAD+"
+    },
+    {
+     "proteins": [
+      "3"
+     ],
+     "references": [
+      "1"
+     ],
+     "comment": "49% of the activity with diacetyl",
+     "value": "methyl pyruvate + NADH + H+ = ? + NAD+"
+    },
+    {
+     "proteins": [
+      "7"
+     ],
+     "references": [
+      "6"
+     ],
+     "comment": "77% of the (R)-2,3-butanediol dehydrogenase activity with substrate acetoin",
+     "value": "2,3-pentanedione + NADH + H+ = 3-hydroxy-2-pentanone + NAD+"
+    },
+    {
+     "proteins": [
+      "3"
+     ],
+     "references": [
+      "1"
+     ],
+     "comment": "85.6% of the activity with diacetyl",
+     "value": "2,3-pentanedione + NADH + H+ = 3-hydroxy-2-pentanone + NAD+"
+    },
+    {
+     "value": "2,3-pentanedione + NADH + H+ = ? + NAD+ | 69% of the activity with diacetyl |",
+     "proteins": [
+      "4"
+     ],
+     "references": [
+      "10"
+     ],
+     "comment": ""
+    },
+    {
+     "value": "(2S,3S)-2,3-butanediol + NAD+ = (3S)-acetoin + NADH + H+ {r}",
+     "proteins": [
+      "4"
+     ],
+     "references": [
+      "10"
+     ],
+     "comment": ""
+    },
+    {
+     "proteins": [
+      "4"
+     ],
+     "references": [
+      "10"
+     ],
+     "comment": "97% of the activity with diacetyl",
+     "value": "(3S)-acetoin + NADH + H+ = (2S,3S)-2,3-butanediol + NAD+  | 97.3% enantiomeric excess and 96.5% diastereomeric excess | {r}"
+    },
+    {
+     "value": "1,2-propanediol + NAD+ = ? + NADH + H+ | 0.5% of the activity with 2,3-butanediol | {r}",
+     "proteins": [
+      "4"
+     ],
+     "references": [
+      "10"
+     ],
+     "comment": ""
+    },
+    {
+     "value": "diacetyl + NADH + H+ = (3S)-acetoin + NAD+ | 97.3% enantiomeric excess | {ir}",
+     "proteins": [
+      "4"
+     ],
+     "references": [
+      "10"
+     ],
+     "comment": ""
+    },
+    {
+     "value": "2,3-hexanedione + NADH + H+ = ? + NAD+ | 66% of the activity with diacetyl |",
+     "proteins": [
+      "4"
+     ],
+     "references": [
+      "10"
+     ],
+     "comment": ""
+    },
+    {
+     "value": "3,4-hexanedione + NADH + H+ = ? + NAD+ | 10% of the activity with diacetyl |",
+     "proteins": [
+      "4"
+     ],
+     "references": [
+      "10"
+     ],
+     "comment": ""
+    },
+    {
+     "value": "diacetyl + NADPH + H+ = (S)-acetoin + NADP+ {ir}",
+     "proteins": [
+      "6",
+      "10"
+     ],
+     "references": [
+      "3",
+      "9"
+     ],
+     "comment": ""
+    },
+    {
+     "value": "diacetyl + NADH + H+ = (R)-acetoin + NAD+ {r}",
+     "proteins": [
+      "9"
+     ],
+     "references": [
+      "7"
+     ],
+     "comment": ""
+    }
+   ],
+   "turnover_number": [
+    {
+     "proteins": [
+      "11"
+     ],
+     "references": [
+      "11"
+     ],
+     "comment": "pH 7.0, 30°C",
+     "value": "110 {NADH}"
+    },
+    {
+     "proteins": [
+      "11"
+     ],
+     "references": [
+      "11"
+     ],
+     "comment": "pH 7.0, 30°C",
+     "value": "163 {diacetyl}"
+    },
+    {
+     "proteins": [
+      "4"
+     ],
+     "references": [
+      "10"
+     ],
+     "comment": "pH 10.0, 30°C",
+     "value": "748 {NAD+}"
+    },
+    {
+     "proteins": [
+      "4"
+     ],
+     "references": [
+      "10"
+     ],
+     "comment": "pH 6.0, 30°C",
+     "value": "202 {(3S)-acetoin}"
+    },
+    {
+     "proteins": [
+      "4"
+     ],
+     "references": [
+      "10"
+     ],
+     "comment": "pH 10.0, 30°C",
+     "value": "591 {(2S,3S)-2,3-butanediol}"
+    },
+    {
+     "proteins": [
+      "4"
+     ],
+     "references": [
+      "10"
+     ],
+     "comment": "pH 6.0, 30°C",
+     "value": "1222 {diacetyl}"
+    },
+    {
+     "proteins": [
+      "4"
+     ],
+     "references": [
+      "10"
+     ],
+     "comment": "pH 6.0, 30°C",
+     "value": "1274 {NADH}"
+    }
+   ],
+   "km_value": [
+    {
+     "proteins": [
+      "1"
+     ],
+     "references": [
+      "4"
+     ],
+     "comment": "25°C, pH 6.0, cosubstrate diacetyl",
+     "value": "0.045 {NADH}"
+    },
+    {
+     "proteins": [
+      "1"
+     ],
+     "references": [
+      "4"
+     ],
+     "comment": "25°C, pH 6.0, cosubstrate methyl pyruvate",
+     "value": "0.095 {NADH}"
+    },
+    {
+     "proteins": [
+      "1"
+     ],
+     "references": [
+      "4"
+     ],
+     "comment": "25°C, pH 6.0, cosubstrate 2,3-pentanedione",
+     "value": "0.025 {NADH}"
+    },
+    {
+     "proteins": [
+      "1"
+     ],
+     "references": [
+      "4"
+     ],
+     "comment": "25°C, pH 6.0, cosubstrate ethyl pyruvate",
+     "value": "0.11 {NADH}"
+    },
+    {
+     "proteins": [
+      "1"
+     ],
+     "references": [
+      "4"
+     ],
+     "comment": "25°C, pH 6.0",
+     "value": "24 {ethyl pyruvate}"
+    },
+    {
+     "proteins": [
+      "1"
+     ],
+     "references": [
+      "4"
+     ],
+     "comment": "25°C, pH 6.0",
+     "value": "16 {Methyl pyruvate}"
+    },
+    {
+     "proteins": [
+      "1"
+     ],
+     "references": [
+      "4"
+     ],
+     "comment": "25°C, pH 6.0",
+     "value": "6 {2,3-Pentanedione}"
+    },
+    {
+     "proteins": [
+      "1"
+     ],
+     "references": [
+      "4"
+     ],
+     "comment": "25°C, pH 6.0",
+     "value": "15 {diacetyl}"
+    },
+    {
+     "proteins": [
+      "11"
+     ],
+     "references": [
+      "11"
+     ],
+     "comment": "pH 7.0, 30°C",
+     "value": "0.05 {NADH}"
+    },
+    {
+     "proteins": [
+      "11"
+     ],
+     "references": [
+      "11"
+     ],
+     "comment": "pH 7.0, 30°C",
+     "value": "4.47 {diacetyl}"
+    },
+    {
+     "proteins": [
+      "2"
+     ],
+     "references": [
+      "5"
+     ],
+     "comment": "pH 7.5, 25°C",
+     "value": "19 {diacetyl}"
+    },
+    {
+     "proteins": [
+      "3"
+     ],
+     "references": [
+      "1"
+     ],
+     "comment": "cosubstrate acetoin, pH 7.0, 25°C",
+     "value": "0.005 {NADH}"
+    },
+    {
+     "proteins": [
+      "3"
+     ],
+     "references": [
+      "1"
+     ],
+     "comment": "pH 7.0, 25°C",
+     "value": "20 {ethyl pyruvate}"
+    },
+    {
+     "proteins": [
+      "3"
+     ],
+     "references": [
+      "1"
+     ],
+     "comment": "cosubstrate diacetyl, pH 7.0, 25°C",
+     "value": "0.007 {NADH}"
+    },
+    {
+     "proteins": [
+      "3"
+     ],
+     "references": [
+      "1"
+     ],
+     "comment": "pH 7.0, 25°C",
+     "value": "1.6 {diacetyl}"
+    },
+    {
+     "proteins": [
+      "3"
+     ],
+     "references": [
+      "1"
+     ],
+     "comment": "pH 7.0, 25°C",
+     "value": "6 {pentane-2,3-dione}"
+    },
+    {
+     "proteins": [
+      "3"
+     ],
+     "references": [
+      "1"
+     ],
+     "comment": "pH 7.0, 25°C",
+     "value": "18 {Methyl pyruvate}"
+    },
+    {
+     "proteins": [
+      "3"
+     ],
+     "references": [
+      "1"
+     ],
+     "comment": "pH 7.0, 25°C",
+     "value": "75 {methyl glyoxal}"
+    },
+    {
+     "proteins": [
+      "4"
+     ],
+     "references": [
+      "10"
+     ],
+     "comment": "pH 6.0, 30°C",
+     "value": "0.25 {NADH}"
+    },
+    {
+     "proteins": [
+      "4"
+     ],
+     "references": [
+      "10"
+     ],
+     "comment": "pH 10.0, 30°C",
+     "value": "0.34 {NAD+}"
+    },
+    {
+     "proteins": [
+      "4"
+     ],
+     "references": [
+      "10"
+     ],
+     "comment": "pH 6.0, 30°C",
+     "value": "0.47 {(3S)-acetoin}"
+    },
+    {
+     "proteins": [
+      "4"
+     ],
+     "references": [
+      "10"
+     ],
+     "comment": "pH 10.0, 30°C",
+     "value": "7.25 {(2S,3S)-2,3-butanediol}"
+    },
+    {
+     "proteins": [
+      "4"
+     ],
+     "references": [
+      "10"
+     ],
+     "comment": "pH 6.0, 30°C",
+     "value": "72.4 {diacetyl}"
+    },
+    {
+     "proteins": [
+      "5",
+      "9"
+     ],
+     "references": [
+      "7"
+     ],
+     "comment": "Michaelis-Menten-type kinetics",
+     "value": "-999 {more}"
+    },
+    {
+     "proteins": [
+      "6"
+     ],
+     "references": [
+      "3"
+     ],
+     "comment": "pH 6.1, 25°C",
+     "value": "0.1 {NADH}"
+    },
+    {
+     "proteins": [
+      "6"
+     ],
+     "references": [
+      "3"
+     ],
+     "comment": "pH 6.1, 25°C",
+     "value": "3.1 {diacetyl}"
+    },
+    {
+     "proteins": [
+      "6"
+     ],
+     "references": [
+      "2"
+     ],
+     "comment": "25°C, pH 6.1",
+     "value": "3 {diacetyl}"
+    },
+    {
+     "proteins": [
+      "6"
+     ],
+     "references": [
+      "2"
+     ],
+     "comment": "25°C, pH 5.9",
+     "value": "0.087 {NADH}"
+    },
+    {
+     "proteins": [
+      "6"
+     ],
+     "references": [
+      "2"
+     ],
+     "comment": "25°C, pH 6.1",
+     "value": "0.116 {NADH}"
+    },
+    {
+     "proteins": [
+      "6"
+     ],
+     "references": [
+      "2"
+     ],
+     "comment": "25°C, pH 6.7",
+     "value": "2.64 {diacetyl}"
+    },
+    {
+     "proteins": [
+      "6"
+     ],
+     "references": [
+      "2"
+     ],
+     "comment": "25°C, pH 6.7",
+     "value": "0.135 {NADH}"
+    },
+    {
+     "proteins": [
+      "6"
+     ],
+     "references": [
+      "2"
+     ],
+     "comment": "25°C, pH 5.9",
+     "value": "2.81 {diacetyl}"
+    }
+   ],
+   "ph_optimum": [
+    {
+     "proteins": [
+      "10"
+     ],
+     "references": [
+      "9"
+     ],
+     "comment": "assay at",
+     "value": "6"
+    },
+    {
+     "value": "6",
+     "proteins": [
+      "1"
+     ],
+     "references": [
+      "4"
+     ],
+     "comment": ""
+    },
+    {
+     "proteins": [
+      "2",
+      "8",
+      "12",
+      "13",
+      "14"
+     ],
+     "references": [
+      "8",
+      "13"
+     ],
+     "comment": "assay at",
+     "value": "6.5"
+    },
+    {
+     "proteins": [
+      "4"
+     ],
+     "references": [
+      "10"
+     ],
+     "comment": "reduction of diacetyl",
+     "value": "5"
+    },
+    {
+     "proteins": [
+      "4"
+     ],
+     "references": [
+      "10"
+     ],
+     "comment": "oxidation of butanediol",
+     "value": "10"
+    },
+    {
+     "proteins": [
+      "5"
+     ],
+     "references": [
+      "7"
+     ],
+     "comment": "diacetyl reduction",
+     "value": "7"
+    },
+    {
+     "value": "6.1",
+     "proteins": [
+      "6"
+     ],
+     "references": [
+      "3"
+     ],
+     "comment": ""
+    }
+   ],
+   "ph_range": [
+    {
+     "proteins": [
+      "4"
+     ],
+     "references": [
+      "10"
+     ],
+     "comment": "reduction of diacetyl",
+     "value": "5-8"
+    },
+    {
+     "proteins": [
+      "6"
+     ],
+     "references": [
+      "2"
+     ],
+     "comment": "5 min, 30% loss of activity",
+     "value": "5"
+    },
+    {
+     "proteins": [
+      "6"
+     ],
+     "references": [
+      "2"
+     ],
+     "comment": "5 min, 20% loss of activity",
+     "value": "5.1"
+    },
+    {
+     "proteins": [
+      "6"
+     ],
+     "references": [
+      "2"
+     ],
+     "comment": "stable within",
+     "value": "5.4-7.6"
+    },
+    {
+     "proteins": [
+      "6"
+     ],
+     "references": [
+      "2"
+     ],
+     "comment": "5 min, 60% loss of activity",
+     "value": "4.8"
+    }
+   ],
+   "specific_activity": [
+    {
+     "proteins": [
+      "10"
+     ],
+     "references": [
+      "9"
+     ],
+     "comment": "purified recombinant enzyme, NADPH, pH 6.0, 30°C",
+     "value": "72.6"
+    },
+    {
+     "proteins": [
+      "12"
+     ],
+     "references": [
+      "13"
+     ],
+     "comment": "pH 6.5, temperature not specified in the publication, with FDH",
+     "value": "79.0"
+    },
+    {
+     "proteins": [
+      "2"
+     ],
+     "references": [
+      "5"
+     ],
+     "comment": "pH 7.5, 25°C",
+     "value": "71.4"
+    },
+    {
+     "proteins": [
+      "4"
+     ],
+     "references": [
+      "10"
+     ],
+     "comment": "substrate diacetyl, 30°C, pH 6.0",
+     "value": "120.0"
+    }
+   ],
+   "temperature_optimum": [
+    {
+     "value": "50",
+     "proteins": [
+      "2"
+     ],
+     "references": [
+      "5"
+     ],
+     "comment": ""
+    },
+    {
+     "proteins": [
+      "10"
+     ],
+     "references": [
+      "9"
+     ],
+     "comment": "assay at",
+     "value": "30"
+    },
+    {
+     "proteins": [
+      "5"
+     ],
+     "references": [
+      "7"
+     ],
+     "comment": "diacetyl reduction",
+     "value": "30"
+    }
+   ],
+   "cofactor": [
+    {
+     "proteins": [
+      "2"
+     ],
+     "references": [
+      "8"
+     ],
+     "comment": "dependent on",
+     "value": "NADH"
+    },
+    {
+     "proteins": [
+      "1"
+     ],
+     "references": [
+      "4"
+     ],
+     "comment": "beta-NADH",
+     "value": "NADH"
+    },
+    {
+     "proteins": [
+      "3"
+     ],
+     "references": [
+      "1"
+     ],
+     "comment": "specific for beta-NADH",
+     "value": "NADH"
+    },
+    {
+     "value": "NADH",
+     "proteins": [
+      "4",
+      "5",
+      "6",
+      "7",
+      "8",
+      "9",
+      "12",
+      "13",
+      "14"
+     ],
+     "references": [
+      "3",
+      "5",
+      "7",
+      "10",
+      "12",
+      "13"
+     ],
+     "comment": ""
+    },
+    {
+     "proteins": [
+      "4"
+     ],
+     "references": [
+      "10"
+     ],
+     "comment": "no activity with NADPH",
+     "value": "more"
+    },
+    {
+     "proteins": [
+      "10"
+     ],
+     "references": [
+      "9"
+     ],
+     "comment": "inactive with NADH",
+     "value": "more"
+    },
+    {
+     "proteins": [
+      "1"
+     ],
+     "references": [
+      "4"
+     ],
+     "comment": "no activity with alpha-NADH or NADPH",
+     "value": "more"
+    },
+    {
+     "proteins": [
+      "10"
+     ],
+     "references": [
+      "9"
+     ],
+     "comment": "dependent on",
+     "value": "NADPH"
+    },
+    {
+     "value": "NAD+",
+     "proteins": [
+      "4",
+      "5",
+      "8",
+      "9",
+      "12",
+      "13",
+      "14"
+     ],
+     "references": [
+      "7",
+      "10",
+      "13"
+     ],
+     "comment": ""
+    }
+   ],
+   "activating_compound": [
+    {
+     "proteins": [
+      "5"
+     ],
+     "references": [
+      "7"
+     ],
+     "comment": "DMSO at a final concentration of 30% v/v added into the assay mixture, increases the activity up to 120% of the control enzyme activity",
+     "value": "DMSO"
+    }
+   ],
+   "inhibitor": [
+    {
+     "proteins": [
+      "1"
+     ],
+     "references": [
+      "4"
+     ],
+     "comment": "substrate inhibition at concentrations above 80-90 mM",
+     "value": "diacetyl"
+    },
+    {
+     "proteins": [
+      "1"
+     ],
+     "references": [
+      "4"
+     ],
+     "comment": "substrate inhibition at concentrations above 80-90 mM",
+     "value": "ethyl pyruvate"
+    },
+    {
+     "proteins": [
+      "1"
+     ],
+     "references": [
+      "4"
+     ],
+     "comment": "substrate inhibition at concentrations above 80-90 mM",
+     "value": "Methyl pyruvate"
+    },
+    {
+     "proteins": [
+      "4"
+     ],
+     "references": [
+      "10"
+     ],
+     "comment": "1 mM, 0.2% of initial activity with substrate diacetyl, 1% with substrate 2,3-butanediol, respectively",
+     "value": "Cu2+"
+    },
+    {
+     "proteins": [
+      "4"
+     ],
+     "references": [
+      "10"
+     ],
+     "comment": "1 mM, 0.5% of initial activity with substrate diacetyl, 0.5% with substrate 2,3-butanediol, respectively",
+     "value": "Ag+"
+    },
+    {
+     "proteins": [
+      "4"
+     ],
+     "references": [
+      "10"
+     ],
+     "comment": "1 mM, 2% of initial activity with substrate diacetyl, 3.5% with substrate 2,3-butanediol, respectively",
+     "value": "Fe3+"
+    },
+    {
+     "proteins": [
+      "4"
+     ],
+     "references": [
+      "10"
+     ],
+     "comment": "1 mM, 91% of initial activity with substrate diacetyl, 90% with substrate 2,3-butanediol, respectively",
+     "value": "EDTA"
+    },
+    {
+     "proteins": [
+      "5"
+     ],
+     "references": [
+      "7"
+     ],
+     "comment": "inhibits 94.6% at 2 mM",
+     "value": "Zn2+"
+    },
+    {
+     "proteins": [
+      "4"
+     ],
+     "references": [
+      "10"
+     ],
+     "comment": "1 mM, 75% of initial activity with substrate diacetyl, 80% with substrate 2,3-butanediol, respectively",
+     "value": "Zn2+"
+    },
+    {
+     "proteins": [
+      "4"
+     ],
+     "references": [
+      "10"
+     ],
+     "comment": "1 mM, 4% of initial activity with substrate diacetyl, 6% with substrate 2,3-butanediol, respectively",
+     "value": "Al3+"
+    },
+    {
+     "value": "Al3+",
+     "proteins": [
+      "5"
+     ],
+     "references": [
+      "7"
+     ],
+     "comment": ""
+    },
+    {
+     "proteins": [
+      "5"
+     ],
+     "references": [
+      "7"
+     ],
+     "comment": "inhibits 91.6% at 2 mM",
+     "value": "Fe2+"
+    },
+    {
+     "proteins": [
+      "6"
+     ],
+     "references": [
+      "3"
+     ],
+     "comment": "competitive for diacetyl, uncompetitive for NADH",
+     "value": "acetone"
+    },
+    {
+     "proteins": [
+      "6"
+     ],
+     "references": [
+      "3"
+     ],
+     "comment": "competitive for diacetyl, uncompetitive for NADH",
+     "value": "Pentane-3-one"
+    },
+    {
+     "proteins": [
+      "6"
+     ],
+     "references": [
+      "3"
+     ],
+     "comment": "competitive, product inhibition",
+     "value": "NAD+"
+    },
+    {
+     "proteins": [
+      "6"
+     ],
+     "references": [
+      "3"
+     ],
+     "comment": "noncompetitive, product inhibition",
+     "value": "acetoin"
+    },
+    {
+     "proteins": [
+      "6"
+     ],
+     "references": [
+      "3"
+     ],
+     "comment": "noncompetitive",
+     "value": "2-oxoglutarate"
+    },
+    {
+     "proteins": [
+      "6"
+     ],
+     "references": [
+      "3"
+     ],
+     "comment": "noncompetitive",
+     "value": "hexane-2,5-dione"
+    }
+   ],
+   "metals_ions": [
+    {
+     "proteins": [
+      "5"
+     ],
+     "references": [
+      "7"
+     ],
+     "comment": "addition of EDTA or the cations at 1 mM, such as Na+, K+, Mn2+, Mg2+, and Ca2+, have no significant effect on the activity of ReADR",
+     "value": "more"
+    },
+    {
+     "proteins": [
+      "5"
+     ],
+     "references": [
+      "7"
+     ],
+     "comment": "activates by 201.6 to 265.6% at 2 mM",
+     "value": "Mn2+"
+    },
+    {
+     "proteins": [
+      "5"
+     ],
+     "references": [
+      "7"
+     ],
+     "comment": "activates by 201.6 to 265.6% at 2 mM",
+     "value": "K+"
+    },
+    {
+     "proteins": [
+      "5"
+     ],
+     "references": [
+      "7"
+     ],
+     "comment": "activates by 201.6 to 265.6% at 2 mM",
+     "value": "Na+"
+    }
+   ],
+   "molecular_weight": [
+    {
+     "proteins": [
+      "1"
+     ],
+     "references": [
+      "4"
+     ],
+     "comment": "gel filtration",
+     "value": "68000"
+    },
+    {
+     "proteins": [
+      "10"
+     ],
+     "references": [
+      "9"
+     ],
+     "comment": "recombinant enzyme, gel filtration",
+     "value": "118000"
+    },
+    {
+     "proteins": [
+      "10"
+     ],
+     "references": [
+      "9"
+     ],
+     "comment": "4 * 28500, recombinant enzyme, SDS-PAGE",
+     "value": "28500"
+    },
+    {
+     "proteins": [
+      "11"
+     ],
+     "references": [
+      "11"
+     ],
+     "comment": "gel filtration",
+     "value": "150000"
+    },
+    {
+     "value": "36000",
+     "proteins": [
+      "11"
+     ],
+     "references": [
+      "11"
+     ],
+     "comment": ""
+    },
+    {
+     "proteins": [
+      "2"
+     ],
+     "references": [
+      "5"
+     ],
+     "comment": "2 * 26000, SDS-PAGE",
+     "value": "26000"
+    },
+    {
+     "proteins": [
+      "2"
+     ],
+     "references": [
+      "5"
+     ],
+     "comment": "gel filtration",
+     "value": "49000"
+    },
+    {
+     "proteins": [
+      "3"
+     ],
+     "references": [
+      "1"
+     ],
+     "comment": "gel filtration",
+     "value": "61000"
+    },
+    {
+     "proteins": [
+      "3"
+     ],
+     "references": [
+      "1"
+     ],
+     "comment": "2 * 28000, SDS-PAGE",
+     "value": "28000"
+    },
+    {
+     "proteins": [
+      "4"
+     ],
+     "references": [
+      "10"
+     ],
+     "comment": "gel filtration",
+     "value": "125000"
+    },
+    {
+     "proteins": [
+      "4"
+     ],
+     "references": [
+      "10"
+     ],
+     "comment": "4 * 30000, SDS-PAGE",
+     "value": "30000"
+    },
+    {
+     "proteins": [
+      "5"
+     ],
+     "references": [
+      "7"
+     ],
+     "comment": "2 * 26864, sequence calculation",
+     "value": "26864"
+    },
+    {
+     "proteins": [
+      "7"
+     ],
+     "references": [
+      "6"
+     ],
+     "comment": "gel filtration",
+     "value": "96000"
+    },
+    {
+     "proteins": [
+      "7"
+     ],
+     "references": [
+      "6"
+     ],
+     "comment": "4 * 26591, calculated",
+     "value": "26591"
+    }
+   ],
+   "subunits": [
+    {
+     "proteins": [
+      "1"
+     ],
+     "references": [
+      "4"
+     ],
+     "comment": "1 * 68000, SDS-PAGE",
+     "value": "monomer"
+    },
+    {
+     "proteins": [
+      "12"
+     ],
+     "references": [
+      "13"
+     ],
+     "comment": "x * 28000, recombinant His-tagged enzyme, SDS-PAGE",
+     "value": "?"
+    },
+    {
+     "proteins": [
+      "3"
+     ],
+     "references": [
+      "1"
+     ],
+     "comment": "2 * 28000, SDS-PAGE",
+     "value": "dimer"
+    },
+    {
+     "proteins": [
+      "2"
+     ],
+     "references": [
+      "5"
+     ],
+     "comment": "2 * 26000, SDS-PAGE",
+     "value": "dimer"
+    },
+    {
+     "proteins": [
+      "4"
+     ],
+     "references": [
+      "10"
+     ],
+     "comment": "4 * 30000, SDS-PAGE",
+     "value": "tetramer"
+    },
+    {
+     "proteins": [
+      "7"
+     ],
+     "references": [
+      "6"
+     ],
+     "comment": "4 * 26591, calculated",
+     "value": "tetramer"
+    },
+    {
+     "proteins": [
+      "10"
+     ],
+     "references": [
+      "9"
+     ],
+     "comment": "4 * 28500, recombinant enzyme, SDS-PAGE",
+     "value": "tetramer"
+    },
+    {
+     "proteins": [
+      "11"
+     ],
+     "references": [
+      "11"
+     ],
+     "comment": "4 * 36000, SDS-PAGE, 4 * 35971, calculated",
+     "value": "tetramer"
+    },
+    {
+     "proteins": [
+      "5"
+     ],
+     "references": [
+      "7"
+     ],
+     "comment": "2 * 26864, sequence calculation",
+     "value": "homodimer"
+    }
+   ],
+   "pi_value": [
+    {
+     "proteins": [
+      "11"
+     ],
+     "references": [
+      "11"
+     ],
+     "comment": "isoelectric focusing",
+     "value": "4.8"
+    },
+    {
+     "proteins": [
+      "11"
+     ],
+     "references": [
+      "11"
+     ],
+     "comment": "calculated",
+     "value": "5.1"
+    },
+    {
+     "proteins": [
+      "3"
+     ],
+     "references": [
+      "1"
+     ],
+     "comment": "isoelectric focusing",
+     "value": "6.8"
+    },
+    {
+     "proteins": [
+      "7"
+     ],
+     "references": [
+      "6"
+     ],
+     "comment": "isoelectric focusing",
+     "value": "5.9-7.2"
+    }
+   ],
+   "application": [
+    {
+     "proteins": [
+      "5"
+     ],
+     "references": [
+      "7"
+     ],
+     "comment": "acetoin(diacetyl) reductase, i.e. 2,3-butanediol dehydrogenase, is one of the key enzymes in the microbial production of 2,3-butanediol, a platform with extensive industrial applications in the production of plastics, printing inks, perfumes, fumigants, spandex, moistening and softening agents, plasticizers, and pharmaceutical carrier",
+     "value": "synthesis"
+    },
+    {
+     "proteins": [
+      "10"
+     ],
+     "references": [
+      "9"
+     ],
+     "comment": "the enzyme is used for production of S-acetoin with higher than 99.9% optical purity from diacetyl using whole cells of engineered Escherichia coli",
+     "value": "synthesis"
+    }
+   ],
+   "protein_variants": [
+    {
+     "proteins": [
+      "13"
+     ],
+     "references": [
+      "13"
+     ],
+     "comment": "acetoin is an important platform chemical with a variety of applications in foods, cosmetics, chemical synthesis, and especially in the asymmetric synthesis of optically active pharmaceuticals. It is also a useful breath biomarker for early lung cancer diagnosis. Enhanced production of optical (S)-acetoin is achieved by a recombinant Escherichia coli whole-cell biocatalyst with NADH regeneration. Development of a systematic approach using in situ-NADH regeneration systems and diacetyl reductase. 52.9 g/l of (S)-acetoin with an enantiomeric purity of 99.5% and a productivity of 6.2 g/l/h are obtained, production of (S)-acetoin can be effectively improved through the engineering of cofactor regeneration with diacetyl reductase and Gdh or Fdh",
+     "value": "more"
+    },
+    {
+     "proteins": [
+      "8",
+      "12",
+      "14"
+     ],
+     "references": [
+      "13"
+     ],
+     "comment": "acetoin is an important platform chemical with a variety of applications in foods, cosmetics, chemical synthesis, and especially in the asymmetric synthesis of optically active pharmaceuticals. It is also a useful breath biomarker for early lung cancer diagnosis. Enhanced production of optical (S)-acetoin is achieved by a recombinant Escherichia coli whole-cell biocatalyst with NADH regeneration. Development of a systematic approach using in situ-NADH regeneration systems and the and diacetyl reductase. 52.9 g/l of (S)-acetoin with an enantiomeric purity of 99.5% and a productivity of 6.2 g/l/h are obtained, production of (S)-acetoin can be effectively improved through the engineering of cofactor regeneration with diacetyl reductase and Gdh or Fdh",
+     "value": "more"
+    },
+    {
+     "proteins": [
+      "7"
+     ],
+     "references": [
+      "12"
+     ],
+     "comment": "selection of an endogenous 2,3-butanediol pathway in Escherichia coli by fermentative redox balance, overview. Anaerobic growth rescue with feeding of acetoin of the deletion mutant strain JCL166 transformed with the designated plasmid carrying the Kp-BudC, Cb-Adh, or the Ec-GldA. substrate-decoupled selection platform based on anaerobic redox balance",
+     "value": "more"
+    }
+   ],
+   "cloned": [
+    {
+     "proteins": [
+      "4"
+     ],
+     "references": [
+      "10"
+     ],
+     "comment": "expression in Escherichia coli"
+    },
+    {
+     "proteins": [
+      "5"
+     ],
+     "references": [
+      "7"
+     ],
+     "comment": "gene adr, DNA and amino acid sequence determination and analysis, sequence comparison, expression of His-tagged enzyme in Escherichia coli"
+    },
+    {
+     "proteins": [
+      "7"
+     ],
+     "references": [
+      "6"
+     ],
+     "comment": "expression in Escherichia coli"
+    },
+    {
+     "proteins": [
+      "7"
+     ],
+     "references": [
+      "12"
+     ],
+     "comment": "gene budC, functional recombinant expression of NADH-dependent Kp-BudC from plasmid pKM3 in Escherichia coli wild-type strain BW25113 and in mutant strain JCL166 (BW25113/F' [traD36, proABþ, lacIqZ DELTAM15 (Tet)] JCL16 DELTAadhE DELTAldhA DELTAfrdBC)"
+    },
+    {
+     "proteins": [
+      "8"
+     ],
+     "references": [
+      "13"
+     ],
+     "comment": "recombinant expression of His-tagged enzyme in Escherichia coli strain BL21(DE3), subcloning in Escherichia coli strain DH5alpha, coexpression with formate dehydrogenase (FDH) gene fdh from Saccharomyces cerevisiae"
+    },
+    {
+     "proteins": [
+      "9"
+     ],
+     "references": [
+      "7"
+     ],
+     "comment": "gene adr, DNA and amino acid sequence determination and analysis, sequence comparison"
+    },
+    {
+     "proteins": [
+      "10"
+     ],
+     "references": [
+      "9"
+     ],
+     "comment": "gene dar, fucntional expression in Escherichia coli strain Rosetta (DE3), resulting in production of S-acetoin with higher than 99.9% optical purity from diacetyl"
+    },
+    {
+     "proteins": [
+      "12"
+     ],
+     "references": [
+      "13"
+     ],
+     "comment": "recombinant expression of His-tagged enzyme in Escherichia coli strain BL21(DE3), subcloning in Escherichia coli strain DH5alpha, coexpression with formate dehydrogenase (FDH) gene fdh from Saccharomyces cerevisiae or glucose dehydrogenase (GDH) gene gdh from Bacillus subtilis"
+    },
+    {
+     "proteins": [
+      "13"
+     ],
+     "references": [
+      "13"
+     ],
+     "comment": "recombinant expression of His-tagged enzyme in Escherichia coli strain BL21(DE3), subcloning in Escherichia coli strain DH5alpha, coexpression with formate dehydrogenase (FDH) gene fdh from Saccharomyces cerevisiae"
+    },
+    {
+     "proteins": [
+      "14"
+     ],
+     "references": [
+      "13"
+     ],
+     "comment": "recombinant expression of His-tagged enzyme in Escherichia coli strain BL21(DE3), subcloning in Escherichia coli strain DH5alpha, coexpression with formate dehydrogenase (FDH) gene fdh from Saccharomyces cerevisiae"
+    }
+   ],
+   "purification": [
+    {
+     "proteins": [
+      "1"
+     ],
+     "references": [
+      "4"
+     ],
+     "comment": ""
+    },
+    {
+     "proteins": [
+      "2"
+     ],
+     "references": [
+      "5"
+     ],
+     "comment": ""
+    },
+    {
+     "proteins": [
+      "2"
+     ],
+     "references": [
+      "8"
+     ],
+     "comment": "native enzyme by adsorption on diethylaminoethyl–Sepharose and hydrophobic interaction chromatography"
+    },
+    {
+     "proteins": [
+      "3"
+     ],
+     "references": [
+      "1"
+     ],
+     "comment": ""
+    },
+    {
+     "proteins": [
+      "5"
+     ],
+     "references": [
+      "7"
+     ],
+     "comment": "recombinant His-tagged enzyme from Escherichia coli by nickel affinity chromatography"
+    },
+    {
+     "proteins": [
+      "10"
+     ],
+     "references": [
+      "9"
+     ],
+     "comment": "recombinant enzyme from Escherichia coli strain Rosetta (DE3)"
+    },
+    {
+     "proteins": [
+      "12"
+     ],
+     "references": [
+      "13"
+     ],
+     "comment": "recombinant His-tagged enzyme from Escherichia coli strain BL21(DE3) by nickel affinity chromatography"
+    }
+   ],
+   "general_stability": [
+    {
+     "proteins": [
+      "2"
+     ],
+     "references": [
+      "5"
+     ],
+     "comment": "unstable to dilution, kept diluted at 0°C for ca. 60 min it will lose 62% of activity. This inactivation is almost completely reversed by the addition of NAD+"
+    }
+   ],
+   "organic_solvent_stability": [
+    {
+     "proteins": [
+      "5"
+     ],
+     "references": [
+      "7"
+     ],
+     "comment": "the enzyme retains 53.6% of the initial activity after 4 h incubation with 30% v/v DMSO at 4°C",
+     "value": "DMSO"
+    }
+   ],
+   "ph_stability": [
+    {
+     "value": "7-8",
+     "proteins": [
+      "7"
+     ],
+     "references": [
+      "6"
+     ],
+     "comment": ""
+    }
+   ],
+   "storage_stability": [
+    {
+     "proteins": [
+      "2"
+     ],
+     "references": [
+      "5"
+     ],
+     "comment": "storage at 0°C in the presence of 20% glycerol, 0.1 mM EDTA, 5 mM 2-mercaptoethanol and 0.6 mM NAD+ in TEA buffer, pH 7.5, half-life of one month"
+    }
+   ],
+   "reference": {
+    "1": {
+     "id": "1",
+     "title": "Purification, characterization and some properties of diacetyl(acetoin) reductase from Enterobacter aerogenes",
+     "authors": [
+      "Carballo, J.",
+      "Martin, R.",
+      "Bernardo, A.",
+      "Gonzalez, J."
+     ],
+     "journal": "Eur. J. Biochem.",
+     "year": 1991,
+     "pages": "327-332",
+     "vol": "198",
+     "pmid": 2040298
+    },
+    "2": {
+     "id": "2",
+     "title": "Pigeon liver diacetyl reductase. Effects of pH on the kinetic parameters of the reaction",
+     "authors": [
+      "Martin, R.",
+      "Diez, V.",
+      "Burgos, J."
+     ],
+     "journal": "Biochim. Biophys. Acta",
+     "year": 1976,
+     "pages": "293-300",
+     "vol": "429",
+     "pmid": 4124
+    },
+    "3": {
+     "id": "3",
+     "title": "Pigeon liver diacetyl reductase. Kinetic and thermodynamic studies with NADH as coenzyme",
+     "authors": [
+      "Burgos, J.",
+      "Martin, R.",
+      "Diez, V."
+     ],
+     "journal": "Biochim. Biophys. Acta",
+     "year": 1974,
+     "pages": "9-16",
+     "vol": "364",
+     "pmid": 4373071
+    },
+    "4": {
+     "id": "4",
+     "title": "Purification and classification of diacetyl-reducing enzymes from Staphylococcus aureus",
+     "authors": [
+      "Vidal, I.",
+      "Gonzalez, J.",
+      "Bernardo, A.",
+      "Martin, R."
+     ],
+     "journal": "Biochem. J.",
+     "year": 1988,
+     "pages": "461-466",
+     "vol": "251",
+     "pmid": 3041963
+    },
+    "5": {
+     "id": "5",
+     "title": "Properties of diacetyl (acetoin) reductase from Bacillus stearothermophilus",
+     "authors": [
+      "Giovannini, P.P.",
+      "Medici, A",
+      "Bergamini, C.M.",
+      "Rippa, M."
+     ],
+     "journal": "Bioorg. Med. Chem.",
+     "year": 1996,
+     "pages": "1197-1201",
+     "vol": "4",
+     "pmid": 8879540
+    },
+    "6": {
+     "id": "6",
+     "title": "Sequence analysis of the gene for and characterization of D-acetoin forming meso-2,3-butanediol dehydrogenase of Klebsiella pneumoniae expressed in Escherichia coli",
+     "authors": [
+      "Ui, S.",
+      "Okajima, Y.",
+      "Mimura, A.",
+      "Kanai, H.",
+      "kobayashi, T.",
+      "Kudo, T."
+     ],
+     "journal": "J. Ferment. Bioeng.",
+     "year": 1997,
+     "pages": "32-37",
+     "vol": "83"
+    },
+    "7": {
+     "id": "7",
+     "title": "Characterization of a stereospecific acetoin(diacetyl) reductase from Rhodococcus erythropolis WZ010 and its application for the synthesis of (2S,3S)-2,3-butanediol",
+     "authors": [
+      "Wang, Z.",
+      "Song, Q.",
+      "Yu, M.",
+      "Wang, Y.",
+      "Xiong, B.",
+      "Zhang, Y.",
+      "Zheng, J.",
+      "Ying, X."
+     ],
+     "journal": "Appl. Microbiol. Biotechnol.",
+     "year": 2014,
+     "pages": "641-650",
+     "vol": "98",
+     "pmid": 23568047
+    },
+    "8": {
+     "id": "8",
+     "title": "New acetoin reductases from Bacillus stearothermophilus: meso- and 2R,3R-butanediol as fermentation products",
+     "authors": [
+      "Giovannini, P.",
+      "Mantovani, M.",
+      "Grandini, A.",
+      "Medici, A.",
+      "Pedrini, P."
+     ],
+     "journal": "J. Mol. Catal. B",
+     "year": 2011,
+     "pages": "15-20",
+     "vol": "69"
+    },
+    "9": {
+     "id": "9",
+     "title": "Production of S-acetoin from diacetyl by Escherichia coli transformant cells that express the diacetyl reductase gene of Paenibacillus polymyxa ZJ-9",
+     "authors": [
+      "Gao, J.",
+      "Xu, Y.",
+      "Li, F.",
+      "Ding, G."
+     ],
+     "journal": "Lett. Appl. Microbiol.",
+     "year": 2013,
+     "pages": "274-281",
+     "vol": "57",
+     "pmid": 23701367
+    },
+    "10": {
+     "id": "10",
+     "title": "Cloning, expression, and characterization of budC gene encoding meso-2,3-butanediol dehydrogenase from Bacillus licheniformis",
+     "authors": [
+      "Xu, G.C.",
+      "Bian, Y.Q.",
+      "Han, R.Z.",
+      "Dong, J.J.",
+      "Ni, Y."
+     ],
+     "journal": "Appl. Biochem. Biotechnol.",
+     "year": 2016,
+     "pages": "604-617",
+     "vol": "178",
+     "pmid": 26494135
+    },
+    "11": {
+     "id": "11",
+     "title": "Identification and characterization of a mycobacterial NAD+-dependent alcohol dehydrogenase with superior reduction of diacetyl to (S)-acetoin",
+     "authors": [
+      "Takeda, M.",
+      "Anamizu, S.",
+      "Motomatsu, S.",
+      "Chen, X.",
+      "Thapa Chhetri, R."
+     ],
+     "journal": "Biosci. Biotechnol. Biochem.",
+     "year": 2014,
+     "pages": "1879-1886",
+     "vol": "78",
+     "pmid": 25082080
+    },
+    "12": {
+     "id": "12",
+     "title": "Selection of an endogenous 2,3-butanediol pathway in Escherichia coli by fermentative redox balance",
+     "authors": [
+      "Liang, K.",
+      "Shen, C.R."
+     ],
+     "journal": "Metab. Eng.",
+     "year": 2017,
+     "pages": "181-191",
+     "vol": "39",
+     "pmid": 27931827
+    },
+    "13": {
+     "id": "13",
+     "title": "Enhanced production of optical (S)-acetoin by a recombinant Escherichia coli whole-cell biocatalyst with NADH regeneration",
+     "authors": [
+      "Li, J.",
+      "Huang, Y.",
+      "Chen, X.",
+      "Du, Q.",
+      "Meng, J.",
+      "Xie, N.",
+      "Huang, R."
+     ],
+     "journal": "RSC Adv.",
+     "year": 2018,
+     "pages": "30512-30519",
+     "vol": "8"
+    }
+   },
+   "ki_value": [
+    {
+     "proteins": [
+      "1"
+     ],
+     "references": [
+      "4"
+     ],
+     "comment": "25°C, pH 6.0",
+     "value": "300 {diacetyl}"
+    },
+    {
+     "proteins": [
+      "1"
+     ],
+     "references": [
+      "4"
+     ],
+     "comment": "25°C, pH 6.0",
+     "value": "150 {ethyl pyruvate}"
+    },
+    {
+     "proteins": [
+      "1"
+     ],
+     "references": [
+      "4"
+     ],
+     "comment": "25°C, pH 6.0",
+     "value": "150 {Methyl pyruvate}"
+    }
+   ],
+   "kcat_km_value": [
+    {
+     "proteins": [
+      "11"
+     ],
+     "references": [
+      "11"
+     ],
+     "comment": "pH 7.0, 30°C",
+     "value": "210 {NADH}"
+    },
+    {
+     "proteins": [
+      "11"
+     ],
+     "references": [
+      "11"
+     ],
+     "comment": "pH 7.0, 30°C",
+     "value": "36.4 {diacetyl}"
+    },
+    {
+     "proteins": [
+      "4"
+     ],
+     "references": [
+      "10"
+     ],
+     "comment": "pH 6.0, 30°C",
+     "value": "16.9 {diacetyl}"
+    },
+    {
+     "proteins": [
+      "4"
+     ],
+     "references": [
+      "10"
+     ],
+     "comment": "pH 10.0, 30°C",
+     "value": "81.5 {(2S,3S)-2,3-butanediol}"
+    },
+    {
+     "proteins": [
+      "4"
+     ],
+     "references": [
+      "10"
+     ],
+     "comment": "pH 6.0, 30°C",
+     "value": "432 {(3S)-acetoin}"
+    },
+    {
+     "proteins": [
+      "4"
+     ],
+     "references": [
+      "10"
+     ],
+     "comment": "pH 10.0, 30°C",
+     "value": "2192 {NAD+}"
+    },
+    {
+     "proteins": [
+      "4"
+     ],
+     "references": [
+      "10"
+     ],
+     "comment": "pH 6.0, 30°C",
+     "value": "5072 {NADH}"
+    },
+    {
+     "proteins": [
+      "5"
+     ],
+     "references": [
+      "7"
+     ],
+     "comment": "pH 7.0, 30°C, recombinant enzyme",
+     "value": "8.519 {NADH}"
+    }
+   ],
+   "general_information": [
+    {
+     "proteins": [
+      "5"
+     ],
+     "references": [
+      "7"
+     ],
+     "comment": "acetoin(diacetyl) reductase, also known as 2,3-butanediol dehydrogenase, is one of the key enzymes in the microbial production of 2,3-butanediol",
+     "value": "metabolism"
+    },
+    {
+     "proteins": [
+      "2"
+     ],
+     "references": [
+      "8"
+     ],
+     "comment": "the enzyme is involved in the butanediol cycle, overview",
+     "value": "metabolism"
+    },
+    {
+     "proteins": [
+      "5",
+      "9"
+     ],
+     "references": [
+      "7"
+     ],
+     "comment": "the enzyme belongs to the family of the short-chain dehydrogenase/reductases",
+     "value": "evolution"
+    }
+   ]
+  },
+  "6.6.99.99": {
+   "history": "internal dummy EC number",
+   "id": "6.6.99.99",
+   "systematic_name": "thermophilic enzyme"
+  }
+ }
+}

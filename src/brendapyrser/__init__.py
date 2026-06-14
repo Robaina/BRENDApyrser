@@ -1,1 +1,3 @@
-from .parser import Reaction, BRENDA, ReactionList
+from .parser import BRENDA, Reaction, ReactionList
+
+__all__ = ["BRENDA", "Reaction", "ReactionList"]

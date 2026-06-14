@@ -2,13 +2,25 @@
 # -*- coding: utf-8 -*-
 
 """
-Object to parse and manipulate the BRENDA database
+Object to parse and manipulate the BRENDA database.
+
+Since the 2024.x releases, BRENDA is distributed as a single structured JSON
+document (schema https://www.brenda-enzymes.org/schemas/docs/2.0.0) instead of
+the legacy flat text file. This module parses that JSON while preserving the
+historical public API (``BRENDA``, ``Reaction``, ``ReactionList`` and their
+properties) and exposing the additional structure now available (UniProt/GenBank
+accessions, structured citations with PMIDs, reversibility, etc.).
 """
 
 from __future__ import annotations
 
+import gzip
+import io
+import json
 import re
+import tarfile
 from importlib import metadata
+from pathlib import Path
 
 import numpy as np
 import pandas as pd
@@ -20,18 +32,72 @@ __version__ = meta["Version"]
 __author__ = meta["Author"]
 
 
+_VALUE_UNIT_RE = re.compile(r"^(?P<num>.*?)\s*\{(?P<unit>.*)\}\s*$")
+_REVERSIBILITY_RE = re.compile(r"\{(ir|r)\}")
+
+
+def _load_database(path_to_database) -> dict:
+    """
+    Load a BRENDA JSON database, transparently handling a plain ``.json`` file,
+    a gzip-compressed ``.json.gz`` file, or a ``.json.tar.gz`` archive (the
+    format in which BRENDA currently distributes the database).
+    """
+    path = Path(path_to_database)
+    name = path.name.lower()
+
+    if name.endswith((".tar.gz", ".tgz")):
+        with tarfile.open(path, "r:gz") as tar:
+            members = [
+                m
+                for m in tar.getmembers()
+                if m.isfile() and m.name.lower().endswith(".json")
+            ]
+            if not members:
+                raise ValueError(f"No .json member found in archive '{path}'")
+            if len(members) > 1:
+                raise ValueError(
+                    f"Multiple .json members found in archive '{path}': "
+                    f"{[m.name for m in members]}"
+                )
+            fobj = tar.extractfile(members[0])
+            with io.TextIOWrapper(fobj, encoding="utf-8") as text:
+                return json.load(text)
+
+    if name.endswith(".gz"):
+        with gzip.open(path, "rt", encoding="utf-8") as fh:
+            return json.load(fh)
+
+    with open(path, encoding="utf-8") as fh:
+        return json.load(fh)
+
+
+def _split_value_unit(value: str):
+    """
+    Split a BRENDA value such as ``"0.045 {NADH}"`` into ``("0.045", "NADH")``.
+    Returns ``(number_part, brace_content)`` where ``brace_content`` is ``None``
+    when the value carries no ``{...}`` annotation.
+    """
+    match = _VALUE_UNIT_RE.match(value or "")
+    if match:
+        return match.group("num").strip(), match.group("unit").strip()
+    return (value or "").strip(), None
+
+
 class BRENDA:
     """
     Provides methods to parse the BRENDA database (https://www.brenda-enzymes.org/)
     """
 
     def __init__(self, path_to_database):
-        with open(path_to_database, encoding="utf-8") as file:
-            self.__data = file.read()
-        self.__ec_numbers = [
-            ec.group(1) for ec in re.finditer("(?<=ID\\t)(.*)(?=\\n)", self.__data)
+        database = _load_database(path_to_database)
+        self.__release = database.get("release", "")
+        self.__schema_version = database.get("version", "")
+        data = database.get("data", {})
+        # Every key is an EC number except the "spontaneous" pseudo-entry, which
+        # is not an enzyme and is therefore excluded from the reaction list.
+        self.__reactions = [
+            Reaction(entry) for key, entry in data.items() if key != "spontaneous"
         ]
-        self.__reactions = self.__initializeReactionObjects()
         self.__copyright = """Copyrighted by Dietmar Schomburg, Techn. University
         Braunschweig, GERMANY. Distributed under the License as stated
         at http:/www.brenda-enzymes.org"""
@@ -45,6 +111,8 @@ class BRENDA:
             <tr>
                 <td><strong>Number of Enzymes</strong></td><td>{n_ec}</td>
             </tr><tr>
+                <td><strong>BRENDA release</strong></td><td>{release}</td>
+            </tr><tr>
                 <td><strong>BRENDA copyright</strong></td><td>{cr}</td>
             </tr><tr>
                 <td><strong>Brendapyrser version</strong></td><td>{parser}</td>
@@ -54,21 +122,11 @@ class BRENDA:
         </table>
         """.format(
             n_ec=len(self.__reactions),
+            release=self.__release,
             cr=self.__copyright,
             parser=__version__,
             author=__author__,
         )
-
-    def __getRxnData(self):
-        rxn_data = [
-            r.group(0)
-            for r in re.finditer("ID\\t(.+?)///", self.__data, flags=re.DOTALL)
-        ]
-        del self.__data
-        return rxn_data
-
-    def __initializeReactionObjects(self):
-        return [Reaction(datum) for datum in self.__getRxnData()]
 
     @property
     def fields(self):
@@ -86,16 +144,25 @@ class BRENDA:
     def copyright(self):
         return self.__copyright
 
+    @property
+    def release(self):
+        """BRENDA release the database was downloaded from, e.g. '2026.1'."""
+        return self.__release
+
+    @property
+    def schema_version(self):
+        """Version of the BRENDA JSON schema used by the loaded database."""
+        return self.__schema_version
+
     def getOrganisms(self) -> list:
         """
         Get list of all represented species in BRENDA
         """
         species = set()
         for rxn in self.__reactions:
-            species.update([s["name"] for s in rxn.proteins.values()])
-        species.remove("")
-        species = list(set([s for s in species if "no activity" not in s]))
-        return species
+            species.update(rxn.organisms)
+        species.discard("")
+        return list({s for s in species if "no activity" not in s})
 
     def getKMcompounds(self) -> list:
         """
@@ -103,11 +170,8 @@ class BRENDA:
         """
         cpds = set()
         for rxn in self.__reactions:
-            cpds.update([s for s in rxn.KMvalues.keys()])
-        try:
-            cpds.remove("")
-        except Exception:
-            pass
+            cpds.update(rxn.KMvalues.keys())
+        cpds.discard("")
         return list(cpds)
 
 
@@ -221,58 +285,153 @@ class EnzymeConditionDict(EnzymeDict):
 
 
 class Reaction:
-    def __init__(self, reaction_data):
-        self.__reaction_data = reaction_data
-        self.__ec_number = self.__extractRegexPattern("(?<=ID\t)(.*)(?=\n)")
-        self.__systematic_name = self.__extractRegexPattern("(?<=SN\t)(.*)(?=\n)")
-        self.__name = self.__extractRegexPattern("(?<=RN\t)(.*)(?=\n)").capitalize()
-        self.__mechanism_str = (
-            self.__extractRegexPattern("(?<=RE\t)(.*)(?=\n[A-Z])", dotall=True)
-            .replace("=", "<=>")
-            .replace("\n\t", "")
-            .split("\nRE\t")
-        )
-        self.__reaction_type = self.__extractRegexPattern(
-            "(?<=RT\t)(.*)(?=\n)", dotall=True
-        ).split("\nRT\t")
-        self.__proteins = self.getSpeciesDict()
-        self.__references = self.getReferencesDict()
+    def __init__(self, entry: dict):
+        self.__entry = entry
+        self.__ec_number = entry.get("id", "")
+        self.__name = entry.get("recommended_name", "")
+        self.__systematic_name = entry.get("systematic_name", "")
+        self.__proteins_raw = entry.get("protein", {})
+        self.__references_raw = entry.get("reference", {})
 
-    def getSpeciesDict(self) -> dict:
-        """
-        Returns a dict listing all proteins for given EC number
-        """
-        species = {}
-        lines = self.__getDataLines("PR")
-        for line in lines:
-            res = self.extractDataLineInfo(line)
-            species_name, protein_ID = self.__splitSpeciesFromProteinID(res["value"])
-            species[res["species"][0]] = {
-                "name": species_name,
-                "proteinID": protein_ID,
-                "refs": res["refs"],
+    # ------------------------------------------------------------------ #
+    # Internal helpers                                                    #
+    # ------------------------------------------------------------------ #
+    @staticmethod
+    def __eval_range_value(v):
+        """Evaluate a single numeric value, averaging ``a-b`` ranges."""
+        try:
+            if not re.search(r"\d-\d", v):
+                return float(v)
+            return float(np.mean([float(s) for s in v.split("-")]))
+        except Exception:
+            return -999
+
+    @staticmethod
+    def __eval_range_pair(v):
+        """Evaluate a numeric range ``a-b`` into ``[a, b]``."""
+        try:
+            return [float(s) for s in v.split("-")]
+        except Exception:
+            return [-999, -999]
+
+    @staticmethod
+    def __format_citation(ref: dict) -> str:
+        """Render a structured reference record as a citation string."""
+        authors = "; ".join(ref.get("authors", []))
+        citation = (
+            f"{authors}: {ref.get('title', '')}. {ref.get('journal', '')} "
+            f"({ref.get('year', '')}) {ref.get('vol', '')}, {ref.get('pages', '')}."
+        ).strip()
+        pmid = ref.get("pmid", "")
+        if pmid:
+            citation += f" {{Pubmed:{pmid}}}"
+        return citation
+
+    @staticmethod
+    def __reversibility(value: str):
+        """Return 'reversible'/'irreversible'/None from a {r}/{ir} annotation."""
+        match = _REVERSIBILITY_RE.search(value or "")
+        if not match:
+            return None
+        return "irreversible" if match.group(1) == "ir" else "reversible"
+
+    def __organisms_for(self, protein_ids: list) -> list:
+        """Map BRENDA protein ids to their organism names."""
+        return list(
+            {
+                self.__proteins_raw[pid]["organism"]
+                for pid in protein_ids
+                if pid in self.__proteins_raw
             }
-        return species
+        )
 
-    def getReferencesDict(self):
-        """
-        Returns a dict listing the bibliography cited for the given EC number
-        """
-        references = {}
-        lines = self.__getDataLines("RF")
-        for line in lines:
-            line = self.__removeTabs(line)
-            line, refs = self.__extractDataField(line, ("<", ">"))
-            references[refs] = line
-        return references
+    def __citations_for(self, ref_ids: list) -> list:
+        """Map BRENDA reference ids to full citation strings."""
+        return [
+            self.__format_citation(self.__references_raw[rid])
+            for rid in ref_ids
+            if rid in self.__references_raw
+        ]
 
+    def __getDictOfEnzymeActuators(self, field: str) -> EnzymePropertyDict:
+        res = {}
+        for record in self.__entry.get(field, []):
+            value = (record.get("value", "") or "").strip()
+            if value != "more":
+                res[value] = {
+                    "species": self.__organisms_for(record.get("proteins", [])),
+                    "meta": record.get("comment", ""),
+                    "refs": self.__citations_for(record.get("references", [])),
+                }
+        return EnzymePropertyDict(res)
+
+    def __getDictOfEnzymeProperties(self, field: str) -> EnzymePropertyDict:
+        res = {}
+        for record in self.__entry.get(field, []):
+            number, substrate = _split_value_unit(record.get("value", ""))
+            substrate = substrate if substrate is not None else ""
+            if substrate == "more":
+                continue
+            res.setdefault(substrate, []).append(
+                {
+                    "value": self.__eval_range_value(number),
+                    "species": self.__organisms_for(record.get("proteins", [])),
+                    "meta": record.get("comment", ""),
+                    "refs": self.__citations_for(record.get("references", [])),
+                }
+            )
+        return EnzymePropertyDict(res)
+
+    def __extractTempOrPHData(self, field: str, is_range: bool) -> list:
+        values = []
+        for record in self.__entry.get(field, []):
+            raw = record.get("value", "")
+            value = (
+                self.__eval_range_pair(raw)
+                if is_range
+                else self.__eval_range_value(raw)
+            )
+            values.append(
+                {
+                    "value": value,
+                    "species": self.__organisms_for(record.get("proteins", [])),
+                    "meta": record.get("comment", ""),
+                    "refs": record.get("references", []),
+                }
+            )
+        return values
+
+    def field(self, name: str) -> list:
+        """
+        Return the raw, enriched records for any BRENDA data field as a list of
+        ``{value, organisms, comment, references}`` dicts, with protein and
+        reference ids resolved to organism names and full citations. Useful for
+        fields without a dedicated property (e.g. ``cloned``, ``application``).
+        """
+        enriched = []
+        for record in self.__entry.get(name, []):
+            if not isinstance(record, dict):
+                continue
+            enriched.append(
+                {
+                    "value": record.get("value", ""),
+                    "organisms": self.__organisms_for(record.get("proteins", [])),
+                    "comment": record.get("comment", ""),
+                    "references": self.__citations_for(record.get("references", [])),
+                }
+            )
+        return enriched
+
+    # ------------------------------------------------------------------ #
+    # Display helpers                                                     #
+    # ------------------------------------------------------------------ #
     def printReactionSummary(self):
         data = {
             "EC number": self.__ec_number,
             "Name": self.__name,
             "Systematic name": self.__systematic_name,
-            "Reaction type": self.__reaction_type,
-            "Mechanism": self.__mechanism,
+            "Reaction type": self.reaction_type,
+            "Reaction": self.reaction_str,
         }
         return pd.DataFrame.from_dict(data, orient="index", columns=[""])
 
@@ -296,192 +455,13 @@ class Reaction:
             ec=self.__ec_number,
             name=self.__name,
             sys_name=self.__systematic_name,
-            rxn_type=self.__reaction_type,
+            rxn_type=self.reaction_type,
             rxn_str=self.reaction_str,
         )
 
-    def __extractRegexPattern(self, pattern, dotall=False):
-        if dotall:
-            flag = re.DOTALL
-        else:
-            flag = 0
-        try:
-            return re.search(pattern, self.__reaction_data, flags=flag).group(1)
-        except Exception:
-            return ""
-
-    def __getDataLines(self, pattern: str):
-        try:
-            search_pattern = f"{pattern}\t(.+?)\n(?!\t)"
-            return [
-                p.group(1)
-                for p in re.finditer(
-                    search_pattern, self.__reaction_data, flags=re.DOTALL
-                )
-            ]
-        except Exception:
-            return []
-
-    @staticmethod
-    def __removeTabs(line):
-        return line.replace("\n", "").replace("\t", "").strip()
-
-    @staticmethod
-    def __extractDataField(line, regex_tags: tuple):
-        try:
-            left, right = regex_tags
-            searched_s = re.search(f"{left}(.+?){right}", line)
-            span = searched_s.span()
-            matched_s = line[span[0] + 1 : span[1] - 1].strip()
-            line = line.replace(f"{searched_s.group()}", "")
-            return (line, matched_s)
-        except Exception:
-            return (line, "")
-
-    @staticmethod
-    def __eval_range_value(v):
-        try:
-            if not re.search("\d-\d", v):
-                return float(v)
-            else:
-                return np.mean([float(s) for s in v.split("-")])
-        except Exception:
-            return -999
-
-    @staticmethod
-    def __splitSpeciesFromProteinID(line):
-        try:
-            idx = re.search("[A-Z]{1}[0-9]{1}", line).start()
-            return (line[:idx].strip(), line[idx:].strip())
-        except Exception:
-            return (line.strip(), "")
-
-    def extractDataLineInfo(self, line: str, numeric_value=False):
-        """
-        Extracts data fields in each data line according to the tags used by BRENDA
-        and described in the REAMDE.txt file. What remains after extracting all tags
-        is the value of that particular data field, e.g., KM value.
-        """
-        line = self.__removeTabs(line)
-        line, specific_info = self.__extractDataField(line, ("{", ".*}"))
-        line, meta = self.__extractDataField(line, ("\(", ".*\)"))
-        line, refs = self.__extractDataField(line, ("<", ">"))
-        line, species = self.__extractDataField(line, ("#", "#"))
-        if numeric_value:
-            value = self.__eval_range_value(line.strip())
-        else:
-            value = line.strip()
-        return {
-            "value": value,
-            "species": species.split(","),
-            "meta": meta,
-            "refs": refs.split(","),
-            "specific_info": specific_info,
-        }
-
-    def __extractReactionMechanismInfo(self, line: str):
-        """
-        Extracts reaction string and mechanism info
-        """
-        line = self.__removeTabs(line)
-        line, meta = self.__extractDataField(line, ("\(", ".*\)"))
-        rxn_str = line.strip()
-        meta_list = []
-        for meta_line in meta.split(";"):
-            meta_line, refs = self.__extractDataField(meta_line, ("<", ">"))
-            meta_line, species = self.__extractDataField(meta_line, ("#", "#"))
-            meta_list.append(
-                {
-                    "species": species.split(","),
-                    "refs": refs.split(","),
-                    "meta": meta_line.strip(),
-                }
-            )
-        return (rxn_str, meta_list)
-
-    def __getBinomialNames(self, species_list: list) -> list:
-        """
-        Returns a list with binomial names mapped to the species codes
-        employed by BRENDA to attach species to protein entries
-        """
-        species_dict = self.__proteins
-        return list(
-            set(
-                [
-                    species_dict[s]["name"]
-                    for s in species_list
-                    if s in species_dict.keys()
-                ]
-            )
-        )
-
-    def __getFullReferences(self, refs_list: list) -> list:
-        """
-        Returns a list with full reference mapped to the refs codes
-        employed by BRENDA in each entry
-        """
-        refs_dict = self.__references
-        return [refs_dict[s] for s in refs_list if s in refs_dict.keys()]
-
-    def __getDictOfEnzymeActuators(self, pattern: str) -> dict:
-        res = {}
-        lines = self.__getDataLines(pattern)
-        for line in lines:
-            data = self.extractDataLineInfo(line)
-            if data["value"] != "more":
-                res[data["value"]] = {
-                    "species": self.__getBinomialNames(data["species"]),
-                    "meta": data["meta"],
-                    #'refs': data['refs']}
-                    "refs": self.__getFullReferences(data["refs"]),
-                }
-        return EnzymePropertyDict(res)
-
-    def __getDictOfEnzymeProperties(self, pattern: str) -> dict:
-        res = {}
-        lines = self.__getDataLines(pattern)
-        for line in lines:
-            data = self.extractDataLineInfo(line, numeric_value=True)
-            substrate = data["specific_info"]
-            if substrate != "more":
-                if substrate not in res.keys():
-                    res[substrate] = []
-                res[substrate].append(
-                    {
-                        "value": data["value"],
-                        "species": self.__getBinomialNames(data["species"]),
-                        "meta": data["meta"],
-                        #'refs': data['refs']})
-                        "refs": self.__getFullReferences(data["refs"]),
-                    }
-                )
-        return EnzymePropertyDict(res)
-
-    def __extractTempOrPHData(self, data_type: str) -> list:
-        values = []
-        lines = self.__getDataLines(data_type)
-        if "R" not in data_type:
-            eval_value = self.__eval_range_value
-        else:
-
-            def eval_value(v):
-                try:
-                    return [float(s) for s in v.split("-")]
-                except Exception:
-                    return [-999, -999]
-
-        for line in lines:
-            data = self.extractDataLineInfo(line)
-            values.append(
-                {
-                    "value": eval_value(data["value"]),
-                    "species": self.__getBinomialNames(data["species"]),
-                    "meta": data["meta"],
-                    "refs": data["refs"],
-                }
-            )
-        return values
-
+    # ------------------------------------------------------------------ #
+    # Public API (preserved)                                             #
+    # ------------------------------------------------------------------ #
     @property
     def summary(self):
         return self.printReactionSummary()
@@ -499,54 +479,65 @@ class Reaction:
         return self.__systematic_name
 
     @property
-    def reaction_str(self):
-        return self.__extractReactionMechanismInfo(self.__mechanism_str)[0]
+    def reaction_str(self) -> str:
+        reactions = self.__entry.get("reaction", [])
+        return reactions[0].get("value", "") if reactions else ""
 
     @property
-    def mechanism(self):
-        return self.__mechanism_str
-        # return self.__extractReactionMechanismInfo(self.__mechanism_str)[1]
+    def mechanism(self) -> list[str]:
+        return [r.get("value", "") for r in self.__entry.get("reaction", [])]
 
     @property
     def reaction_type(self) -> list[str]:
-        return self.__reaction_type
+        return [r.get("value", "") for r in self.__entry.get("reaction_type", [])]
 
     @property
     def cofactors(self):
-        return self.__getDictOfEnzymeActuators("CF")
+        return self.__getDictOfEnzymeActuators("cofactor")
 
     @property
     def metals(self):
-        return self.__getDictOfEnzymeActuators("ME")
+        return self.__getDictOfEnzymeActuators("metals_ions")
 
     @property
     def inhibitors(self):
-        return self.__getDictOfEnzymeActuators("IN")
+        return self.__getDictOfEnzymeActuators("inhibitor")
 
     @property
     def activators(self):
-        return self.__getDictOfEnzymeActuators("AC")
+        return self.__getDictOfEnzymeActuators("activating_compound")
 
     @property
     def KMvalues(self):
-        return self.__getDictOfEnzymeProperties("KM")
+        return self.__getDictOfEnzymeProperties("km_value")
 
     @property
     def KIvalues(self):
-        return self.__getDictOfEnzymeProperties("KI")
+        return self.__getDictOfEnzymeProperties("ki_value")
 
     @property
     def KKMvalues(self):
-        return self.__getDictOfEnzymeProperties("KKM")
+        return self.__getDictOfEnzymeProperties("kcat_km_value")
 
     @property
     def Kcatvalues(self):
-        return self.__getDictOfEnzymeProperties("TN")
+        return self.__getDictOfEnzymeProperties("turnover_number")
 
     @property
     def specificActivities(self):
-        lines = self.__getDataLines("SA")
-        return [self.extractDataLineInfo(line, numeric_value=True) for line in lines]
+        res = []
+        for record in self.__entry.get("specific_activity", []):
+            number, _ = _split_value_unit(record.get("value", ""))
+            res.append(
+                {
+                    "value": self.__eval_range_value(number),
+                    "species": self.__organisms_for(record.get("proteins", [])),
+                    "meta": record.get("comment", ""),
+                    "refs": self.__citations_for(record.get("references", [])),
+                    "specific_info": "",
+                }
+            )
+        return res
 
     @property
     def substratesAndProducts(self) -> list:
@@ -555,37 +546,76 @@ class Reaction:
         of the enzyme across organisms.
         """
         substrates, products, res = [], [], []
-        lines = self.__getDataLines("NSP")
-        for line in lines:
-            data = self.extractDataLineInfo(line)
-            rxn = (
-                data["value"]
-                .replace("{}", "")
-                .replace("?", "")
-                .replace("more", "")
-                .strip()
-            )
+        for record in self.__entry.get("natural_substrates_products", []):
+            rxn = re.sub(r"\{.*?\}", "", record.get("value", ""))
+            rxn = rxn.replace("?", "").replace("more", "").strip()
             try:
                 subs, prods = rxn.split("=")
-                subs = [s.strip() for s in subs.split("+") if s.strip() != ""]
-                prods = [s.strip() for s in prods.split("+") if s.strip() != ""]
-                subs.sort()
-                prods.sort()
-                if subs not in substrates and len(subs) > 0 and len(prods) > 0:
-                    substrates.append(subs)
-                    products.append(prods)
-                    res.append({"substrates": subs, "products": prods})
-            except Exception:
-                pass
+            except ValueError:
+                continue
+            subs = sorted(s.strip() for s in subs.split("+") if s.strip() != "")
+            prods = sorted(s.strip() for s in prods.split("+") if s.strip() != "")
+            if subs and prods and subs not in substrates:
+                substrates.append(subs)
+                products.append(prods)
+                res.append({"substrates": subs, "products": prods})
         return res
+
+    @property
+    def substrates_products(self) -> list:
+        """
+        All catalogued substrate/product pairs (BRENDA ``substrates_products``),
+        enriched with reversibility, organisms and citations.
+        """
+        res = []
+        for record in self.__entry.get("substrates_products", []):
+            value = record.get("value", "")
+            res.append(
+                {
+                    "value": _REVERSIBILITY_RE.sub("", value).strip(),
+                    "reversibility": self.__reversibility(value),
+                    "organisms": self.__organisms_for(record.get("proteins", [])),
+                    "comment": record.get("comment", ""),
+                    "references": self.__citations_for(record.get("references", [])),
+                }
+            )
+        return res
+
+    @property
+    def synonyms(self) -> list:
+        return [r.get("value", "") for r in self.__entry.get("synonyms", [])]
+
+    @property
+    def molecular_weight(self) -> list:
+        return self.field("molecular_weight")
+
+    @property
+    def subunits(self) -> list:
+        return self.field("subunits")
+
+    @property
+    def pi_value(self) -> list:
+        return self.field("pi_value")
+
+    @property
+    def ic50_value(self) -> list:
+        return self.field("ic50_value")
+
+    @property
+    def source_tissue(self) -> list:
+        return self.field("source_tissue")
+
+    @property
+    def localization(self) -> list:
+        return self.field("localization")
 
     @property
     def temperature(self):
         return EnzymeConditionDict(
             {
-                "optimum": self.__extractTempOrPHData("TO"),
-                "range": self.__extractTempOrPHData("TR"),
-                "stability": self.__extractTempOrPHData("TS"),
+                "optimum": self.__extractTempOrPHData("temperature_optimum", False),
+                "range": self.__extractTempOrPHData("temperature_range", True),
+                "stability": self.__extractTempOrPHData("temperature_stability", False),
             }
         )
 
@@ -593,25 +623,57 @@ class Reaction:
     def PH(self):
         return EnzymeConditionDict(
             {
-                "optimum": self.__extractTempOrPHData("PHO"),
-                "range": self.__extractTempOrPHData("PHR"),
-                "stability": self.__extractTempOrPHData("PHS"),
+                "optimum": self.__extractTempOrPHData("ph_optimum", False),
+                "range": self.__extractTempOrPHData("ph_range", True),
+                "stability": self.__extractTempOrPHData("ph_stability", False),
             }
         )
 
     @property
     def proteins(self) -> dict:
-        return self.__proteins
+        """
+        Returns a dict listing all proteins for the given EC number, keyed by
+        BRENDA protein id. Preserves the historical ``name``/``proteinID``/``refs``
+        keys and adds ``organism``/``accessions``/``source``/``comment``.
+        """
+        result = {}
+        for pid, p in self.__proteins_raw.items():
+            accessions = p.get("accessions", [])
+            result[pid] = {
+                "name": p.get("organism", ""),
+                "organism": p.get("organism", ""),
+                "proteinID": accessions[0] if accessions else "",
+                "accessions": accessions,
+                "source": p.get("source", ""),
+                "comment": p.get("comment", ""),
+                "refs": p.get("references", []),
+            }
+        return result
 
     @property
     def organisms(self) -> list:
         """
         Returns a list containing all represented species in the database for this reaction
         """
-        organisms = list(set([s["name"] for s in self.proteins.values()]))
+        organisms = list({p.get("organism", "") for p in self.__proteins_raw.values()})
         organisms.sort()
         return organisms
 
     @property
-    def references(self):
-        return self.__references
+    def references(self) -> dict:
+        """
+        Bibliography cited for this EC number as ``{id: citation_string}``.
+        See :pyattr:`bibliography` for the structured records.
+        """
+        return {
+            rid: self.__format_citation(ref)
+            for rid, ref in self.__references_raw.items()
+        }
+
+    @property
+    def bibliography(self) -> dict:
+        """
+        Structured bibliography as ``{id: {title, authors, journal, year, vol,
+        pages, pmid}}``.
+        """
+        return self.__references_raw

@@ -4,7 +4,7 @@ build-backend = "poetry.core.masonry.api"
 
 [tool.poetry]
 name = "brendapyrser"
-version = "0.0.4"
+version = "0.1.0"
 description = "Tools to parse the BRENDA database"
 license = "Apache-2.0"
 authors = ["Semidán Robaina Estévez <semidan.robaina@gmail.com>"]
@@ -22,10 +22,9 @@ classifiers = [
 ]
 packages = [{ include = "brendapyrser", from = "src" }]
 [tool.poetry.dependencies]
-python = "^3.8"
-numpy = "^1.20.2"
-pandas = "^1.2.4"
-importlib-metadata = "^4.0.1"
+python = "^3.10"
+numpy = ">=1.24"
+pandas = ">=1.5"
 
 [tool.ruff]
 select = [
@@ -38,7 +37,6 @@ ignore = [
     "E501", # line too long, handled by black
     "B008", # do not perform function calls in argument defaults
     "C901", # mccabe complexity
-    "E999", # match statement is not yet supported
     "W605", # ASCII art, verbatim text
 ]
 
