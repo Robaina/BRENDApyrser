@@ -185,6 +185,69 @@ class TestEdgeCases(unittest.TestCase):
         self.assertEqual(rxn.organisms, [])
 
 
+class TestCompoundNameParsing(unittest.TestCase):
+    """Regression test for issue #12: compound names containing parentheses must
+    not be truncated at the first '('. The legacy text parser extracted the
+    first ``(...)`` group as a comment, cutting the EC 5.6.2.2 inhibitor below
+    down to ``6-methoxy-4-``."""
+
+    # Real EC 5.6.2.2 inhibitor; the nested ()/[] are the trap.
+    COMPOUND = (
+        "6-methoxy-4-(2-[4-[([1,3]oxathiolo[5,4-c]pyridin-6-ylmethyl)amino]"
+        "piperidin-1-yl]ethyl)quinoline-3-carbonitrile"
+    )
+
+    def setUp(self):
+        self.rxn = Reaction(
+            {
+                "id": "5.6.2.2",
+                "protein": {
+                    "1": {
+                        "id": "1",
+                        "organism": "Homo sapiens",
+                        "references": ["1"],
+                        "comment": "",
+                    }
+                },
+                "reference": {
+                    "1": {
+                        "id": "1",
+                        "title": "t",
+                        "authors": ["a"],
+                        "journal": "j",
+                        "year": 2020,
+                    }
+                },
+                "inhibitor": [
+                    {
+                        "value": self.COMPOUND,
+                        "proteins": ["1"],
+                        "references": ["1"],
+                        "comment": "",
+                    }
+                ],
+                "ki_value": [
+                    {
+                        "value": f"0.5 {{{self.COMPOUND}}}",
+                        "proteins": ["1"],
+                        "references": ["1"],
+                        "comment": "",
+                    }
+                ],
+            }
+        )
+
+    def test_inhibitor_name_not_truncated(self):
+        names = list(self.rxn.inhibitors.keys())
+        self.assertIn(self.COMPOUND, names)
+        # the legacy bug truncated this to "6-methoxy-4-"
+        self.assertNotIn("6-methoxy-4-", names)
+
+    def test_kinetic_substrate_name_not_truncated(self):
+        # the parenthesised compound is the {substrate} key of the Ki value
+        self.assertIn(self.COMPOUND, self.rxn.KIvalues.keys())
+
+
 class TestLoaders(unittest.TestCase):
     """The loader must accept plain JSON, gzip, and tar.gz inputs."""
 
