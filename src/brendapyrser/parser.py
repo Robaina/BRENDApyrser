@@ -35,6 +35,17 @@ __author__ = meta["Author"]
 _VALUE_UNIT_RE = re.compile(r"^(?P<num>.*?)\s*\{(?P<unit>.*)\}\s*$")
 _REVERSIBILITY_RE = re.compile(r"\{(ir|r)\}")
 
+# BRENDA still embeds legacy annotations inside reaction-string values:
+#   {ir}/{r} reversibility, |...| pipe comments, and <1,2,3> numeric reference
+# tags. These must be stripped before parsing substrates/products so they do not
+# leak into compound names. The reference-tag pattern is numeric-only on purpose
+# so it never touches chemical notation such as glycosidic bonds, e.g. "(1->4)".
+_BRACE_RE = re.compile(r"\{.*?\}")
+_PIPE_RE = re.compile(r"\|([^|]*)\|")
+_REF_TAG_RE = re.compile(r"<[0-9][0-9,]*>")
+_PROTEIN_TAG_RE = re.compile(r"#\d+(?:,\d+)*#")
+_MULTISPACE_RE = re.compile(r"\s{2,}")
+
 
 def _load_database(path_to_database) -> dict:
     """
@@ -81,6 +92,33 @@ def _split_value_unit(value: str):
     if match:
         return match.group("num").strip(), match.group("unit").strip()
     return (value or "").strip(), None
+
+
+def _clean_reaction_string(value: str) -> str:
+    """
+    Strip legacy annotations (``|...|`` comments, ``{...}`` reversibility and
+    ``<1,2>`` reference tags) from a reaction-string value, leaving only the
+    reaction equation itself. Chemical notation such as ``(1->4)`` glycosidic
+    bonds or polymer subscripts (``[...]n+m``) is preserved.
+    """
+    s = _PIPE_RE.sub(" ", value or "")
+    s = _BRACE_RE.sub(" ", s)
+    s = _REF_TAG_RE.sub(" ", s)
+    return _MULTISPACE_RE.sub(" ", s).strip()
+
+
+def _split_reaction_side(side: str) -> list:
+    """
+    Split one side of a reaction equation into compounds, splitting only on
+    surrounding-space ``+`` so that ionic ``+`` (e.g. ``H+``, ``NAD+``) and
+    polymer subscripts (``[...]n+m``) stay attached to the compound name.
+    ``?`` and ``more`` placeholders are dropped.
+    """
+    return [
+        token.strip()
+        for token in side.split(" + ")
+        if token.strip() not in ("", "?", "more")
+    ]
 
 
 class BRENDA:
@@ -547,14 +585,12 @@ class Reaction:
         """
         substrates, products, res = [], [], []
         for record in self.__entry.get("natural_substrates_products", []):
-            rxn = re.sub(r"\{.*?\}", "", record.get("value", ""))
-            rxn = rxn.replace("?", "").replace("more", "").strip()
-            try:
-                subs, prods = rxn.split("=")
-            except ValueError:
+            rxn = _clean_reaction_string(record.get("value", ""))
+            if rxn.count("=") != 1:
                 continue
-            subs = sorted(s.strip() for s in subs.split("+") if s.strip() != "")
-            prods = sorted(s.strip() for s in prods.split("+") if s.strip() != "")
+            subs_side, prods_side = rxn.split("=")
+            subs = sorted(_split_reaction_side(subs_side))
+            prods = sorted(_split_reaction_side(prods_side))
             if subs and prods and subs not in substrates:
                 substrates.append(subs)
                 products.append(prods)
@@ -570,12 +606,23 @@ class Reaction:
         res = []
         for record in self.__entry.get("substrates_products", []):
             value = record.get("value", "")
+            # |...| pipe comments are not pulled into the JSON `comment` field by
+            # BRENDA, so fold them in here rather than discard them.
+            pipe_notes = [
+                _PROTEIN_TAG_RE.sub("", _REF_TAG_RE.sub("", note)).strip()
+                for note in _PIPE_RE.findall(value)
+            ]
+            pipe_notes = [note for note in pipe_notes if note]
+            comment = record.get("comment", "")
+            if pipe_notes:
+                extra = "; ".join(pipe_notes)
+                comment = f"{comment}; {extra}" if comment else extra
             res.append(
                 {
-                    "value": _REVERSIBILITY_RE.sub("", value).strip(),
+                    "value": _clean_reaction_string(value),
                     "reversibility": self.__reversibility(value),
                     "organisms": self.__organisms_for(record.get("proteins", [])),
-                    "comment": record.get("comment", ""),
+                    "comment": comment,
                     "references": self.__citations_for(record.get("references", [])),
                 }
             )

@@ -119,6 +119,37 @@ class TestReaction(unittest.TestCase):
         self.assertEqual(first["reversibility"], "irreversible")
         self.assertNotIn("{ir}", first["value"])
 
+    def test_substrates_and_products_preserve_ions(self):
+        # PR #13 issue #1: splitting reactions on a bare "+" dropped ion charges
+        # (e.g. "H+" -> "H", "NAD+" -> "NAD"). Split on " + " keeps them intact.
+        sp = self.rxn.substratesAndProducts
+        self.assertEqual(len(sp), 1)
+        self.assertIn("H+", sp[0]["substrates"])
+        self.assertIn("NAD+", sp[0]["products"])
+        self.assertNotIn("H", sp[0]["substrates"])
+        self.assertNotIn("NAD", sp[0]["products"])
+
+    def test_filter_by_compound_matches_ions(self):
+        # Ionic compounds are now filterable because their "+" is preserved.
+        self.assertEqual(
+            [r.ec_number for r in self.db.reactions.filter_by_compound("NAD+")],
+            ["1.1.1.304"],
+        )
+
+    def test_substrates_products_strip_annotations(self):
+        # PR #13 issue #2: |...| pipe comments and <refs> must not leak into the
+        # compound string; the pipe note is folded into `comment`, not discarded.
+        for sp in self.rxn.substrates_products:
+            self.assertNotIn("|", sp["value"])
+            self.assertNotIn("<", sp["value"])
+            self.assertNotIn("{", sp["value"])
+        rec = next(
+            sp
+            for sp in self.rxn.substrates_products
+            if sp["value"] == "2,3-pentanedione + NADH + H+ = ? + NAD+"
+        )
+        self.assertIn("69% of the activity with diacetyl", rec["comment"])
+
     def test_synonyms(self):
         self.assertIn("ADS1", self.rxn.synonyms)
 
