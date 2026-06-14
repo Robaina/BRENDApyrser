@@ -5,7 +5,7 @@ authors:
     given-names: "Semidán"
     orcid: "https://orcid.org/0000-0003-0781-1677"
 title: "BRENDApyrser: a Python package to parse and manipulate the BRENDA database"
-version: 0.0.3
+version: 0.1.0
 doi: 10.5281/zenodo.7026555
-date-released: 2022-08-26
+date-released: 2026-06-14
 url: "https://github.com/Robaina/BRENDApyrser"
