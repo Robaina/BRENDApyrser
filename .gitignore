@@ -46,3 +46,11 @@ dev.ipynb
 *NOTES.txt
 
 ms/*
+
+# Secrets — never commit real API keys (the MCP example uses .env)
+.env
+.env.local
+**/.env
+**/.env.local
+!.env.example
+!**/.env.example

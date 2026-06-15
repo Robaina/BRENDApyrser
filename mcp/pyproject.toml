@@ -1,0 +1,31 @@
+[build-system]
+requires = ["setuptools>=61"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "brenda-mcp"
+version = "0.1.0"
+description = "Model Context Protocol (MCP) server exposing the BRENDApyrser API to LLM agents"
+readme = "README.md"
+license = { text = "Apache-2.0" }
+authors = [{ name = "Semidán Robaina Estévez", email = "semidan.robaina@gmail.com" }]
+requires-python = ">=3.10"
+keywords = ["BRENDA", "enzymes", "MCP", "LLM", "bioinformatics"]
+dependencies = [
+    "mcp>=1.2.0",
+    "brendapyrser>=0.1.0",
+]
+
+[project.optional-dependencies]
+# Dependencies needed only to run the example LLM agent in examples/.
+examples = [
+    "anthropic>=0.40",   # Claude
+    "openai>=1.40",      # DeepSeek (OpenAI-compatible API)
+    "python-dotenv>=1.0",
+]
+
+[project.scripts]
+brenda-mcp = "brenda_mcp.server:main"
+
+[tool.setuptools.packages.find]
+where = ["src"]
