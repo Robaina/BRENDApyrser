@@ -261,7 +261,9 @@ async def main_async(provider: str, question: str) -> None:
                     answer = await run_claude(toolbox, question)
                 else:
                     answer = await run_deepseek(toolbox, question)
-            except Exception as exc:  # noqa: BLE001 — surface a clean message, not a stack trace
+            except (
+                Exception
+            ) as exc:  # noqa: BLE001 — surface a clean message, not a stack trace
                 print(f"\nLLM call failed ({type(exc).__name__}): {exc}")
                 return
 
