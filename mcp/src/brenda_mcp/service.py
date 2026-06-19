@@ -130,7 +130,9 @@ def _histogram(sorted_vals: list[float], bins: int) -> list[dict[str, float]]:
     ]
 
 
-def _coerce(values: Iterable[Any], *, max_value: Optional[float], drop_negative: bool) -> list[float]:
+def _coerce(
+    values: Iterable[Any], *, max_value: Optional[float], drop_negative: bool
+) -> list[float]:
     """Coerce to finite floats, dropping the parser's -999 sentinel (negatives)
     and anything above ``max_value`` (used to trim implausible outliers, exactly
     as the example notebook does with ``values < 1000``)."""
@@ -284,7 +286,9 @@ def enzyme_kinetics(
         ]
         result["stats"] = summarize_values(vals, max_value=max_value)
         if include_values:
-            result["values"] = _coerce(vals, max_value=max_value, drop_negative=True)[:values_limit]
+            result["values"] = _coerce(vals, max_value=max_value, drop_negative=True)[
+                :values_limit
+            ]
         return result
 
     if parameter not in _KINETIC_PROPERTY:
@@ -304,12 +308,19 @@ def enzyme_kinetics(
         s = summarize_values(vals, bins=0, max_value=max_value)
         if s["count"]:
             breakdown.append(
-                {"compound": cmp_name, "count": s["count"],
-                 "median": s["median"], "min": s["min"], "max": s["max"]}
+                {
+                    "compound": cmp_name,
+                    "count": s["count"],
+                    "median": s["median"],
+                    "min": s["min"],
+                    "max": s["max"],
+                }
             )
     result["by_compound"] = breakdown[:25]
     if include_values:
-        result["values"] = _coerce(all_values, max_value=max_value, drop_negative=True)[:values_limit]
+        result["values"] = _coerce(all_values, max_value=max_value, drop_negative=True)[
+            :values_limit
+        ]
     return result
 
 
@@ -333,20 +344,27 @@ def enzyme_conditions(
         "organism_filter": organism,
     }
     kept = [
-        rec for rec in records
+        rec
+        for rec in records
         if not organism or _organism_matches(organism, rec.get("species", []))
     ]
     if condition == "range":
         # values are [low, high] pairs
-        pairs = [rec.get("value") for rec in kept
-                 if isinstance(rec.get("value"), (list, tuple)) and len(rec["value"]) == 2]
+        pairs = [
+            rec.get("value")
+            for rec in kept
+            if isinstance(rec.get("value"), (list, tuple)) and len(rec["value"]) == 2
+        ]
         lows = [p[0] for p in pairs]
         highs = [p[1] for p in pairs]
         result["count"] = len(pairs)
         result["low"] = summarize_values(lows, bins=0)
         result["high"] = summarize_values(highs, bins=0)
-        result["ranges"] = [[round(float(lo), 3), round(float(hi), 3)]
-                            for lo, hi in pairs if lo >= 0 and hi >= 0][:100]
+        result["ranges"] = [
+            [round(float(lo), 3), round(float(hi), 3)]
+            for lo, hi in pairs
+            if lo >= 0 and hi >= 0
+        ][:100]
     else:
         result["stats"] = summarize_values([rec.get("value") for rec in kept])
     return result
@@ -426,7 +444,9 @@ def search_enzymes(query: str, *, limit: int = 25) -> dict[str, Any]:
     return {"query": query, "count": len(hits), "results": hits}
 
 
-def find_enzymes_by_compound(compound: str, *, role: str = "any", limit: int = 25) -> dict[str, Any]:
+def find_enzymes_by_compound(
+    compound: str, *, role: str = "any", limit: int = 25
+) -> dict[str, Any]:
     rl = get_brenda().reactions
     if role == "substrate":
         matches = rl.filter_by_substrate(compound)
@@ -440,7 +460,9 @@ def find_enzymes_by_compound(compound: str, *, role: str = "any", limit: int = 2
         "compound": compound,
         "role": role,
         "total": len(matches),
-        "results": [{"ec_number": r.ec_number, "name": r.name} for r in matches[:limit]],
+        "results": [
+            {"ec_number": r.ec_number, "name": r.name} for r in matches[:limit]
+        ],
     }
 
 
@@ -449,7 +471,9 @@ def find_enzymes_by_organism(organism: str, *, limit: int = 25) -> dict[str, Any
     return {
         "organism": organism,
         "total": len(matches),
-        "results": [{"ec_number": r.ec_number, "name": r.name} for r in matches[:limit]],
+        "results": [
+            {"ec_number": r.ec_number, "name": r.name} for r in matches[:limit]
+        ],
     }
 
 
@@ -476,7 +500,9 @@ def parameter_distribution(
         n_scanned += 1
         if parameter in _KINETIC_PROPERTY:
             prop = getattr(r, _KINETIC_PROPERTY[parameter])
-            vals, _ = _collect_property_values(prop, compound=compound, organism=organism)
+            vals, _ = _collect_property_values(
+                prop, compound=compound, organism=organism
+            )
             values.extend(vals)
         elif parameter == "specific_activity":
             for rec in r.specificActivities:

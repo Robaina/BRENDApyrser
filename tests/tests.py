@@ -274,5 +274,222 @@ class TestLoaders(unittest.TestCase):
             self._assert_loads(tar_path)
 
 
+class TestBRENDAExtras(unittest.TestCase):
+    """Database-level accessors not covered by TestBRENDA."""
+
+    @classmethod
+    def setUpClass(cls):
+        cls.db = BRENDA(FIXTURE)
+
+    def test_fields_and_units_exposed(self):
+        self.assertTrue(self.db.fields)
+        self.assertTrue(self.db.units)
+
+    def test_copyright(self):
+        self.assertIn("Braunschweig", self.db.copyright)
+
+    def test_repr_html(self):
+        html = self.db._repr_html_()
+        self.assertIn("2026.1", html)
+        self.assertIn("Number of Enzymes", html)
+
+
+class TestReactionList(unittest.TestCase):
+    """ReactionList lookups, filters and container semantics."""
+
+    @classmethod
+    def setUpClass(cls):
+        cls.db = BRENDA(FIXTURE)
+
+    def test_get_by_name_case_insensitive(self):
+        rxn = self.db.reactions.get_by_name("DIACETYL REDUCTASE [(S)-ACETOIN FORMING]")
+        self.assertEqual(rxn.ec_number, "1.1.1.304")
+
+    def test_get_by_name_missing_raises(self):
+        with self.assertRaises(ValueError):
+            self.db.reactions.get_by_name("no such enzyme")
+
+    def test_filter_by_substrate(self):
+        hits = self.db.reactions.filter_by_substrate("NADH")
+        self.assertEqual([r.ec_number for r in hits], ["1.1.1.304"])
+
+    def test_filter_by_product(self):
+        hits = self.db.reactions.filter_by_product("NAD+")
+        self.assertEqual([r.ec_number for r in hits], ["1.1.1.304"])
+
+    def test_filter_no_match_returns_empty(self):
+        self.assertEqual(self.db.reactions.filter_by_substrate("unobtainium"), [])
+
+    def test_slicing_returns_reactionlist(self):
+        from brendapyrser.parser import ReactionList
+
+        self.assertIsInstance(self.db.reactions[:1], ReactionList)
+        self.assertEqual(len(self.db.reactions[:1]), 1)
+
+    def test_filter_by_organism_returns_reactionlist(self):
+        from brendapyrser.parser import ReactionList
+
+        self.assertIsInstance(
+            self.db.reactions.filter_by_organism("Staphylococcus"), ReactionList
+        )
+
+
+class TestReactionProperties(unittest.TestCase):
+    """Reaction properties beyond the core kinetics already covered."""
+
+    @classmethod
+    def setUpClass(cls):
+        cls.db = BRENDA(FIXTURE)
+        cls.rxn = cls.db.reactions.get_by_id("1.1.1.304")
+
+    def test_metals_excludes_more(self):
+        self.assertIn("Mn2+", self.rxn.metals)
+        self.assertNotIn("more", self.rxn.metals)
+
+    def test_activators(self):
+        self.assertIn("DMSO", self.rxn.activators)
+
+    def test_inhibitors(self):
+        self.assertIn("diacetyl", self.rxn.inhibitors)
+        self.assertNotIn("more", self.rxn.inhibitors)
+
+    def test_specific_activities(self):
+        first = self.rxn.specificActivities[0]
+        self.assertEqual(first["value"], 72.6)
+        self.assertIn("species", first)
+        self.assertIn("refs", first)
+
+    def test_mechanism(self):
+        self.assertEqual(
+            self.rxn.mechanism, ["(S)-acetoin + NAD+ = diacetyl + NADH + H+"]
+        )
+
+    def test_reaction_type_absent_is_empty(self):
+        # The fixture entry carries no `reaction_type`; must degrade to [].
+        self.assertEqual(self.rxn.reaction_type, [])
+
+    def test_field_backed_properties(self):
+        for records in (
+            self.rxn.molecular_weight,
+            self.rxn.subunits,
+            self.rxn.pi_value,
+            self.rxn.source_tissue,
+        ):
+            self.assertIsInstance(records, list)
+            self.assertTrue(records)
+            self.assertTrue(all("value" in r and "comment" in r for r in records))
+
+    def test_molecular_weight_enriched_with_citation(self):
+        first = self.rxn.molecular_weight[0]
+        self.assertEqual(first["value"], "68000")
+        self.assertIn("Staphylococcus aureus", first["organisms"])
+
+    def test_references_embed_pubmed(self):
+        self.assertIn("Pubmed:3041963", self.rxn.references["4"])
+
+
+class TestConditions(unittest.TestCase):
+    """pH / temperature EnzymeConditionDict behaviour."""
+
+    @classmethod
+    def setUpClass(cls):
+        cls.rxn = BRENDA(FIXTURE).reactions.get_by_id("1.1.1.304")
+
+    def test_ph_optimum(self):
+        self.assertEqual(self.rxn.PH["optimum"][0]["value"], 6.0)
+
+    def test_ph_range_is_pair(self):
+        self.assertEqual(self.rxn.PH["range"][0]["value"], [5.0, 8.0])
+
+    def test_filter_by_condition_valid(self):
+        only = self.rxn.temperature.filter_by_condition("optimum")
+        self.assertEqual(list(only.keys()), ["optimum"])
+
+    def test_get_values(self):
+        self.assertTrue(self.rxn.PH.get_values())
+
+
+class TestPropertyDicts(unittest.TestCase):
+    """EnzymePropertyDict filtering helpers."""
+
+    @classmethod
+    def setUpClass(cls):
+        cls.rxn = BRENDA(FIXTURE).reactions.get_by_id("1.1.1.304")
+
+    def test_filter_by_compound_hit(self):
+        self.assertEqual(
+            list(self.rxn.KMvalues.filter_by_compound("NADH").keys()), ["NADH"]
+        )
+
+    def test_filter_by_compound_miss_returns_empty_list(self):
+        self.assertEqual(self.rxn.KMvalues.filter_by_compound("zzz"), {"zzz": []})
+
+    def test_filter_by_organism(self):
+        filtered = self.rxn.KMvalues.filter_by_organism("Staphylococcus aureus")
+        self.assertTrue(
+            all(
+                any("Staphylococcus aureus" in s for s in v["species"])
+                for recs in filtered.values()
+                for v in recs
+            )
+        )
+
+
+class TestRangeEvaluation(unittest.TestCase):
+    """Numeric/range coercion via constructed entries (deterministic)."""
+
+    def _reaction(self, **fields):
+        base = {"id": "9.9.9.9", "protein": {}, "reference": {}}
+        base.update(fields)
+        return Reaction(base)
+
+    def test_km_range_is_averaged(self):
+        rxn = self._reaction(
+            km_value=[{"value": "1.0-3.0 {X}", "proteins": [], "references": []}]
+        )
+        self.assertEqual(rxn.KMvalues.get_values(), [2.0])
+
+    def test_ph_optimum_range_is_averaged(self):
+        rxn = self._reaction(
+            ph_optimum=[{"value": "6-8", "proteins": [], "references": []}]
+        )
+        self.assertEqual(rxn.PH["optimum"][0]["value"], 7.0)
+
+    def test_ph_range_kept_as_pair(self):
+        rxn = self._reaction(
+            ph_range=[{"value": "5-8", "proteins": [], "references": []}]
+        )
+        self.assertEqual(rxn.PH["range"][0]["value"], [5.0, 8.0])
+
+    def test_unparseable_scalar_is_sentinel(self):
+        rxn = self._reaction(
+            temperature_optimum=[{"value": "oops", "proteins": [], "references": []}]
+        )
+        self.assertEqual(rxn.temperature["optimum"][0]["value"], -999)
+
+    def test_unparseable_range_is_sentinel_pair(self):
+        rxn = self._reaction(
+            ph_range=[{"value": "low-high", "proteins": [], "references": []}]
+        )
+        self.assertEqual(rxn.PH["range"][0]["value"], [-999, -999])
+
+
+class TestDisplay(unittest.TestCase):
+    """Jupyter/summary rendering helpers."""
+
+    @classmethod
+    def setUpClass(cls):
+        cls.rxn = BRENDA(FIXTURE).reactions.get_by_id("1.1.1.304")
+
+    def test_summary_dataframe(self):
+        summary = self.rxn.summary
+        self.assertEqual(summary.loc["EC number"].iloc[0], "1.1.1.304")
+
+    def test_repr_html(self):
+        html = self.rxn._repr_html_()
+        self.assertIn("1.1.1.304", html)
+        self.assertIn("Enzyme identifier", html)
+
+
 if __name__ == "__main__":
     unittest.main()
