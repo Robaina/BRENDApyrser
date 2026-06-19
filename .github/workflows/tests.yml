@@ -7,7 +7,9 @@ on:
       - '**.bib'
       - 'ms/*'
   pull_request:
-    types: [opened, reopened, edited]
+    # `synchronize` re-runs the suite when new commits are pushed to an open PR;
+    # without it the tests only ran on PR open/reopen and missed later commits.
+    types: [opened, reopened, synchronize]
     paths-ignore:
       - '**.md'
       - '**.ipynb'
@@ -55,3 +57,6 @@ jobs:
         uses: codecov/codecov-action@v3
         with:
           version: "v0.1.15"
+        # Forks have no access to repo secrets, so the upload may be rejected.
+        # Coverage is informational only — never fail a contributor's PR on it.
+        continue-on-error: true

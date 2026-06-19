@@ -54,7 +54,13 @@ CompoundKind = Literal[
 ]
 CompoundRole = Literal["substrate", "product", "any"]
 DistributionParam = Literal[
-    "km", "kcat", "ki", "kcat_km", "specific_activity", "temperature_optimum", "ph_optimum"
+    "km",
+    "kcat",
+    "ki",
+    "kcat_km",
+    "specific_activity",
+    "temperature_optimum",
+    "ph_optimum",
 ]
 
 
@@ -190,7 +196,9 @@ def get_enzyme_references(ec_number: str, limit: int = 25) -> dict:
 
 
 @mcp.tool()
-def find_enzymes_by_compound(compound: str, role: CompoundRole = "any", limit: int = 25) -> dict:
+def find_enzymes_by_compound(
+    compound: str, role: CompoundRole = "any", limit: int = 25
+) -> dict:
     """Find enzymes that act on a given compound. `role` restricts to reactions
     where the compound is a substrate, a product, or either. Uses exact
     compound-name matching against BRENDA's natural substrate/product lists.
